@@ -1,0 +1,5 @@
+#comments example
+/.idea
+*.iml
+out
+target
