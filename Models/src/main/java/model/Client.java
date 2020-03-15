@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 public class Client implements Serializable {
@@ -8,58 +9,30 @@ public class Client implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private UUID id;
-    private Airship airship;
-    private Route route;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private List<Ticket> tickets;
 
-    public Client(UUID id, Airship airship, Route route) {
+    public Client(UUID id, String firstName, String middleName, String lastName, List<Ticket> tickets) {
         this.id = id;
-        this.airship = airship;
-        this.route = route;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.tickets = tickets;
     }
 
-    public Client(Airship airship, Route route) {
+    public Client(String firstName, String middleName, String lastName, List<Ticket> tickets) {
         this.id = UUID.randomUUID();
-        this.airship = airship;
-        this.route = route;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.tickets = tickets;
     }
 
     public Client() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Airship getAirship() {
-        return airship;
-    }
-
-    public void setAirship(Airship airship) {
-        this.airship = airship;
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-
-    public void setRoute(Route route) {
-        this.route = route;
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", airship=" + airship +
-                ", route=" + route +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -71,18 +44,36 @@ public class Client implements Serializable {
 
         if (obj.getClass() == this.getClass()) {
             Client client = (Client) obj;
-            return id.equals(client.id)
-                    && airship.equals(client.airship)
-                    && route.equals(client.route);
+            if (client.tickets.size() != this.tickets.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < this.tickets.size(); ++i) {
+                if (!client.tickets.contains(this.tickets.get(i))) {
+                    return false;
+                }
+            }
+
+            return this.id.equals(client.id)
+                    && this.firstName.equals(client.firstName)
+                    && this.middleName.equals(client.middleName)
+                    && this.lastName.equals(client.lastName);
         }
+
         return false;
     }
 
-    @Override
+
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + (airship == null ? 0 : airship.hashCode());
-        result = 31 * result + (route == null ? 0 : route.hashCode());
+        int result = this.id.hashCode();
+        result = 31 * result + (this.firstName == null ? 0 : this.firstName.hashCode());
+        result = 31 * result + (this.middleName == null ? 0 : this.middleName.hashCode());
+        result = 31 * result + (this.lastName == null ? 0 : this.lastName.hashCode());
+
+        for (Ticket ticket : tickets) {
+            result = 31 * result + ticket.hashCode();
+        }
+
         return result;
     }
 }
