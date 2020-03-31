@@ -1,7 +1,5 @@
 package sql;
 
-import org.sqlite.JDBC;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,14 +14,14 @@ public class ConnectToDB {
     }
 
     public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                DriverManager.registerDriver(new JDBC());
+        try {
+            if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + PATH_TO_DB);
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return connection;
     }
+
 }

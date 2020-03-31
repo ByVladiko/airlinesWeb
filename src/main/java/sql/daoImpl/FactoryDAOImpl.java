@@ -3,21 +3,19 @@ package sql.daoImpl;
 import dao.*;
 import model.*;
 
-public class FactoryDAO{
+public class FactoryDAOImpl {
 
-    private FactoryDAO() {
+    private FactoryDAOImpl() {
     }
 
-    public static DAO<Airship> getAirshipDAO() {
-        return AirshipDAOImpl.getInstance();
-    }
+    public static DAO<Airship> getAirshipDAO() { return new AirshipDAOImpl(); }
 
     public static DAO<Client> getClientDAO() {
         return null;
     }
 
     public static  DAO<Route> getRouteDAO() {
-        return null;
+        return new RouteDAOImpl();
     }
 
     public static  DAO<Ticket> getTicketDAO() {
@@ -25,7 +23,7 @@ public class FactoryDAO{
     }
 
     public static  DAO<Flight> getFlightDAO() {
-        return null;
+        return new FlightDAOImpl();
     }
 
 }

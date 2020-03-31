@@ -12,27 +12,17 @@ import java.util.UUID;
 
 public class AirshipDAOImpl implements DAO<Airship> {
 
-    private static AirshipDAOImpl airshipDAO;
-    private Connection connection = ConnectToDB.getConnection();
-
-    private AirshipDAOImpl() {
-    }
-
-    static AirshipDAOImpl getInstance() {
-        if (airshipDAO == null) {
-            airshipDAO = new AirshipDAOImpl();
-        }
-        return airshipDAO;
+    public AirshipDAOImpl() {
     }
 
     @Override
     public void create(Airship airship) {
-        try (PreparedStatement statement = this.connection.prepareStatement(
-                "INSERT INTO airship " +
-                        "VALUES(?, ?, ?)")) {
-            statement.setObject(1, airship.getId().toString());
-            statement.setObject(2, airship.getModel());
-            statement.setObject(3, airship.getNumberOfSeat());
+        try (Connection connection = ConnectToDB.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO airship " +
+                             "VALUES(?, ?, ?)")) {
+            statement.setString(1, airship.getId().toString());
+            statement.setString(2, airship.getModel());
+            statement.setInt(3, airship.getNumberOfSeat());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,8 +30,9 @@ public class AirshipDAOImpl implements DAO<Airship> {
     }
 
     @Override
-    public Airship getById(int i) {
-        try (Statement statement = this.connection.createStatement()) {
+    public Airship getById(String id) {
+        try (Connection connection = ConnectToDB.getConnection();
+             Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM airship WHERE id = ?");
             if (resultSet.first()) {
                 return new Airship(UUID.fromString(resultSet.getString("id")),
@@ -56,12 +47,14 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public void update(Airship airship) {
-        try (PreparedStatement statement = this.connection.prepareStatement("UPDATE airship SET model = ? , "
-                + "number_of_seat = ? "
-                + "WHERE id = ?")) {
-            statement.setObject(1, airship.getModel());
-            statement.setObject(2, airship.getNumberOfSeat());
-            statement.setObject(3, airship.getId().toString());
+        try (Connection connection = ConnectToDB.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE airship SET model = ? , "
+                     + "number_of_seat = ? "
+                     + "WHERE id = ?")) {
+            statement.setString(1, airship.getModel());
+            statement.setInt(2, airship.getNumberOfSeat());
+            statement.setString(3, airship.getId().toString());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,9 +63,9 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public void delete(Airship airship) {
-        try (PreparedStatement statement = this.connection.prepareStatement(
-                "DELETE FROM airship WHERE id = ?")) {
-            statement.setObject(1, airship.getId().toString());
+        try (Connection connection = ConnectToDB.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM airship WHERE id = ?")) {
+            statement.setString(1, airship.getId().toString());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,7 +74,8 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public List<Airship> getAll() {
-        try (Statement statement = this.connection.createStatement()) {
+        try (Connection connection = ConnectToDB.getConnection();
+             Statement statement = connection.createStatement()) {
             List<Airship> airships = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM airship");
             while (resultSet.next()) {
