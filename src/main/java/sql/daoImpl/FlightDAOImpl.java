@@ -74,10 +74,10 @@ public class FlightDAOImpl implements DAO<Flight> {
         try (Connection connection = ConnectToDB.getConnection();
                 PreparedStatement statement = connection.prepareStatement(createFlight)) {
             statement.setString(1, flight.getId().toString());
-            statement.setDate(2, ConvertDate.convert(flight.getDateOfDeparture()));
-            statement.setDate(3, ConvertDate.convert(flight.getDateOfArrival()));
+            statement.setString(2, ConvertDate.convert(flight.getDateOfDeparture()));
+            statement.setString(3, ConvertDate.convert(flight.getDateOfArrival()));
             statement.setString(4, flight.getAirship().getId().toString());
-            statement.setString(3, flight.getRoute().getId().toString());
+            statement.setString(5, flight.getRoute().getId().toString());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,8 +111,8 @@ public class FlightDAOImpl implements DAO<Flight> {
     public void update(Flight flight) {
         try (Connection connection = ConnectToDB.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateFlight)) {
-            statement.setDate(1, ConvertDate.convert(flight.getDateOfDeparture()));
-            statement.setDate(2, ConvertDate.convert(flight.getDateOfArrival()));
+            statement.setString(1, ConvertDate.convert(flight.getDateOfDeparture()));
+            statement.setString(2, ConvertDate.convert(flight.getDateOfArrival()));
             statement.setString(3, flight.getAirship().getId().toString());
             statement.setString(4, flight.getRoute().getId().toString());
             statement.setString(5, flight.getId().toString());
