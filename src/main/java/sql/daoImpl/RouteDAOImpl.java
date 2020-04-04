@@ -15,12 +15,16 @@ public class RouteDAOImpl implements DAO<Route> {
     public RouteDAOImpl() {
     }
 
+    private static String createRoute = "INSERT INTO route VALUES(?, ?, ?)";
+    private static String getByIdRoute = "SELECT * FROM route WHERE id = ?";
+    private static String updateRoute = "UPDATE route SET start_point = ?, end_point = ? WHERE id = ?";
+    private static String deleteRoute = "DELETE FROM route WHERE id = ?";
+    private static String getAllRoute = "SELECT * FROM route";
+
     @Override
     public void create(Route route) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO route " +
-                             "VALUES(?, ?, ?)")) {
+             PreparedStatement statement = connection.prepareStatement(createRoute)) {
             statement.setString(1, route.getId().toString());
             statement.setString(2, route.getStartPoint());
             statement.setString(3, route.getEndPoint());
@@ -33,9 +37,10 @@ public class RouteDAOImpl implements DAO<Route> {
     @Override
     public Route getById(String id) {
         try (Connection connection = ConnectToDB.getConnection();
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM route WHERE id = ?");
-            if (resultSet.first()) {
+             PreparedStatement statement = connection.prepareStatement(getByIdRoute)) {
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 return new Route(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("start_point"),
                         resultSet.getString("end_point"));
@@ -49,14 +54,13 @@ public class RouteDAOImpl implements DAO<Route> {
     @Override
     public void update(Route route) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE route SET start_point = ? , "
-                             + "end_point = ? "
-                             + "WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement(updateRoute)) {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());
-            statement.execute();
+            if (statement.executeUpdate() == 0) {
+                create(route);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,8 +69,7 @@ public class RouteDAOImpl implements DAO<Route> {
     @Override
     public void delete(Route route) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "DELETE FROM route WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement(deleteRoute)) {
             statement.setString(1, route.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -79,7 +82,7 @@ public class RouteDAOImpl implements DAO<Route> {
         try (Connection connection = ConnectToDB.getConnection();
              Statement statement = connection.createStatement()) {
             List<Route> routes = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM route");
+            ResultSet resultSet = statement.executeQuery(getAllRoute);
             while (resultSet.next()) {
                 routes.add(new Route(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("start_point"),

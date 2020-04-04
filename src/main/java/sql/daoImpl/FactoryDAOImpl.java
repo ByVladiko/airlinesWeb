@@ -11,7 +11,7 @@ public class FactoryDAOImpl {
     public static DAO<Airship> getAirshipDAO() { return new AirshipDAOImpl(); }
 
     public static DAO<Client> getClientDAO() {
-        return null;
+        return new ClientDAOImpl();
     }
 
     public static  DAO<Route> getRouteDAO() {
@@ -19,7 +19,7 @@ public class FactoryDAOImpl {
     }
 
     public static  DAO<Ticket> getTicketDAO() {
-        return null;
+        return new TicketDAOImpl();
     }
 
     public static  DAO<Flight> getFlightDAO() {

@@ -15,11 +15,16 @@ public class AirshipDAOImpl implements DAO<Airship> {
     public AirshipDAOImpl() {
     }
 
+    private static String createAirship = "INSERT INTO airship VALUES(?, ?, ?)";
+    private static String getByIdAirship = "SELECT * FROM airship WHERE id = ?";
+    private static String updateAirship = "UPDATE airship SET model = ?, number_of_seat = ? WHERE id = ?";
+    private static String deleteAirship = "DELETE FROM airship WHERE id = ?";
+    private static String getAllAirship = "SELECT * FROM airship";
+
     @Override
     public void create(Airship airship) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO airship " +
-                             "VALUES(?, ?, ?)")) {
+             PreparedStatement statement = connection.prepareStatement(createAirship)) {
             statement.setString(1, airship.getId().toString());
             statement.setString(2, airship.getModel());
             statement.setInt(3, airship.getNumberOfSeat());
@@ -32,9 +37,10 @@ public class AirshipDAOImpl implements DAO<Airship> {
     @Override
     public Airship getById(String id) {
         try (Connection connection = ConnectToDB.getConnection();
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM airship WHERE id = ?");
-            if (resultSet.first()) {
+             PreparedStatement statement = connection.prepareStatement(getByIdAirship)) {
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 return new Airship(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("model"),
                         resultSet.getInt("number_of_seat"));
@@ -48,14 +54,13 @@ public class AirshipDAOImpl implements DAO<Airship> {
     @Override
     public void update(Airship airship) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE airship SET model = ? , "
-                     + "number_of_seat = ? "
-                     + "WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement(updateAirship)) {
             statement.setString(1, airship.getModel());
             statement.setInt(2, airship.getNumberOfSeat());
             statement.setString(3, airship.getId().toString());
-            statement.execute();
+            if (statement.executeUpdate() == 0) {
+                create(airship);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,7 +69,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
     @Override
     public void delete(Airship airship) {
         try (Connection connection = ConnectToDB.getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM airship WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement(deleteAirship)) {
             statement.setString(1, airship.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -77,7 +82,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
         try (Connection connection = ConnectToDB.getConnection();
              Statement statement = connection.createStatement()) {
             List<Airship> airships = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM airship");
+            ResultSet resultSet = statement.executeQuery(getAllAirship);
             while (resultSet.next()) {
                 airships.add(new Airship(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("model"),
