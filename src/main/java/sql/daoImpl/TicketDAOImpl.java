@@ -88,6 +88,7 @@ public class TicketDAOImpl implements DAO<Ticket> {
             statement.setString(2, ticket.getFlight().getId().toString());
             statement.setInt(3, ticket.getCategory().getIndex());
             statement.setFloat(4, ticket.getCost());
+            statement.setString(5, null);
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
