@@ -15,16 +15,16 @@ public class RouteDAO implements DAO<Route> {
     public RouteDAO() {
     }
 
-    private static String createRoute = "INSERT INTO route VALUES(?, ?, ?)";
-    private static String getByIdRoute = "SELECT * FROM route WHERE id = ?";
-    private static String updateRoute = "UPDATE route SET start_point = ?, end_point = ? WHERE id = ?";
-    private static String deleteRoute = "DELETE FROM route WHERE id = ?";
-    private static String getAllRoute = "SELECT * FROM route";
+    private static final String CREATE_ROUTE = "INSERT INTO route VALUES(?, ?, ?)";
+    private static final String GET_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
+    private static final String UPDATE_ROUTE = "UPDATE route SET start_point = ?, end_point = ? WHERE id = ?";
+    private static final String DELETE_ROUTE = "DELETE FROM route WHERE id = ?";
+    private static final String SELECT_ALL_ROUTES = "SELECT * FROM route";
 
     @Override
     public void create(Route route) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createRoute)) {
+             PreparedStatement statement = connection.prepareStatement(CREATE_ROUTE)) {
             statement.setString(1, route.getId().toString());
             statement.setString(2, route.getStartPoint());
             statement.setString(3, route.getEndPoint());
@@ -37,7 +37,7 @@ public class RouteDAO implements DAO<Route> {
     @Override
     public Route getById(String id) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(getByIdRoute)) {
+             PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -54,7 +54,7 @@ public class RouteDAO implements DAO<Route> {
     @Override
     public void update(Route route) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(updateRoute)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_ROUTE)) {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());
@@ -69,7 +69,7 @@ public class RouteDAO implements DAO<Route> {
     @Override
     public void delete(Route route) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteRoute)) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_ROUTE)) {
             statement.setString(1, route.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class RouteDAO implements DAO<Route> {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
              Statement statement = connection.createStatement()) {
             List<Route> routes = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(getAllRoute);
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_ROUTES);
             while (resultSet.next()) {
                 routes.add(new Route(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("start_point"),

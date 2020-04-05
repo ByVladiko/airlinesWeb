@@ -18,8 +18,8 @@ public class FlightDAO implements DAO<Flight> {
     public FlightDAO() {
     }
 
-    private static String createFlight = "INSERT INTO flight VALUES(?, ?, ?, ?, ?)";
-    private static String getByIdFlight = "SELECT\n" +
+    private static final String CREATE_FLIGT = "INSERT INTO flight VALUES(?, ?, ?, ?, ?)";
+    private static final String GET_FLIGHT_BY_ID = "SELECT\n" +
             "        a.id as flight_id,\n" +
             "        a.date_of_departure as date_departure,\n" +
             "        a.date_of_arrival as date_arrival,\n" +
@@ -41,14 +41,14 @@ public class FlightDAO implements DAO<Flight> {
             "        a.route = c.id\n" +
             "WHERE\n" +
             "        a.id = ?";
-    private static String updateFlight = "UPDATE flight SET "
+    private static final String UPDATE_FLIGHT = "UPDATE flight SET "
             + "date_of_departure = ?, "
             + "date_of_arrival = ?, "
             + "airship = ?, "
             + "route = ? "
             + "WHERE id = ?";
-    private static String deleteFlight = "DELETE FROM flight WHERE id = ?";
-    private static String getAllFlight = "SELECT\n" +
+    private static final String DELETE_FLIGHT = "DELETE FROM flight WHERE id = ?";
+    private static final String SELECT_ALL_FLIGHTS = "SELECT\n" +
             "        a.id as flight_id,\n" +
             "        a.date_of_departure as date_departure,\n" +
             "        a.date_of_arrival as date_arrival,\n" +
@@ -72,7 +72,7 @@ public class FlightDAO implements DAO<Flight> {
     @Override
     public void create(Flight flight) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createFlight)) {
+             PreparedStatement statement = connection.prepareStatement(CREATE_FLIGT)) {
             statement.setString(1, flight.getId().toString());
             statement.setString(2, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(3, DateConverter.convert(flight.getDateOfArrival()));
@@ -87,7 +87,7 @@ public class FlightDAO implements DAO<Flight> {
     @Override
     public Flight getById(String id) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(getByIdFlight)) {
+             PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -110,7 +110,7 @@ public class FlightDAO implements DAO<Flight> {
     @Override
     public void update(Flight flight) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(updateFlight)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_FLIGHT)) {
             statement.setString(1, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(2, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(3, flight.getAirship().getId().toString());
@@ -127,7 +127,7 @@ public class FlightDAO implements DAO<Flight> {
     @Override
     public void delete(Flight flight) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteFlight)) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_FLIGHT)) {
             statement.setString(1, flight.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -141,7 +141,7 @@ public class FlightDAO implements DAO<Flight> {
             Statement statement = connection.createStatement())
         {
             List<Flight> flightList = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(getAllFlight);
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_FLIGHTS);
             while (resultSet.next()) {
                 flightList.add(
                         new Flight(UUID.fromString(resultSet.getString("flight_id")),

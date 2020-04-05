@@ -16,8 +16,8 @@ public class ClientDAO implements DAO<Client> {
     public ClientDAO() {
     }
 
-    private static String createClient = "INSERT INTO client VALUES(?, ?, ?, ?)";
-    private static String getByIdClient = "SELECT\n" +
+    private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?)";
+    private static final String GET_CLIENT_BY_ID = "SELECT\n" +
             "        *\n" +
             "FROM \n" +
             "        client a\n" +
@@ -54,9 +54,10 @@ public class ClientDAO implements DAO<Client> {
             "            f.client = a.id\n" +
             "        WHERE a.id = ?\n" +
             "        ORDER BY a.id";
-    private static String updateClient = "UPDATE client SET first_name = ?, middle_name = ?, last_name = ? WHERE id = ?";
-    private static String deleteClient = "DELETE FROM client WHERE id = ?";
-    private static String getAllClient = "SELECT\n" +
+
+    private static final String UPDATE_CLIENT = "UPDATE client SET first_name = ?, middle_name = ?, last_name = ? WHERE id = ?";
+    private static final String DELETE_CLIENT_BY_ID = "DELETE FROM client WHERE id = ?";
+    private static final String SELECT_ALL_CLIENTS = "SELECT\n" +
             "        *\n" +
             "FROM \n" +
             "        client a\n" +
@@ -96,7 +97,7 @@ public class ClientDAO implements DAO<Client> {
     @Override
     public void create(Client client) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createClient)) {
+             PreparedStatement statement = connection.prepareStatement(CREATE_CLIENT)) {
             statement.setString(1, client.getId().toString());
             statement.setString(2, client.getFirstName());
             statement.setString(3, client.getMiddleName());
@@ -110,7 +111,7 @@ public class ClientDAO implements DAO<Client> {
     @Override
     public Client getById(String id) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(getByIdClient)) {
+             PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -159,7 +160,7 @@ public class ClientDAO implements DAO<Client> {
     @Override
     public void update(Client client) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(updateClient)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_CLIENT)) {
             statement.setString(1, client.getFirstName());
             statement.setString(2, client.getMiddleName());
             statement.setString(3, client.getLastName());
@@ -175,7 +176,7 @@ public class ClientDAO implements DAO<Client> {
     @Override
     public void delete(Client client) {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteClient)) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_CLIENT_BY_ID)) {
             statement.setString(1, client.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -188,7 +189,7 @@ public class ClientDAO implements DAO<Client> {
         try (Connection connection = DatabaseConnectivityProvider.getConnection();
              Statement statement = connection.createStatement()) {
             List<Client> clientList = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(getAllClient);
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_CLIENTS);
             while (resultSet.next()) {
                 Client client = new Client(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("first_name"),
