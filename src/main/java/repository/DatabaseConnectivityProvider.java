@@ -1,6 +1,7 @@
-package sql;
+package repository;
 
 import org.sqlite.JDBC;
+import org.sqlite.SQLiteConfig;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,15 +10,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectToDB {
+public class DatabaseConnectivityProvider {
 
     private static Connection connection;
     private static String dbType;
     private static String pathToDb;
     private static String dbName;
     private static String dbSchema;
+    private static SQLiteConfig sqLiteConfig;
 
-    private ConnectToDB() {
+    private DatabaseConnectivityProvider() {
     }
 
     public static void registryDriver() {
@@ -29,6 +31,9 @@ public class ConnectToDB {
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
             dbName = property.getProperty("DB_NAME");
             dbSchema = property.getProperty("DB_SCHEMA");
+
+            sqLiteConfig = new SQLiteConfig();
+            sqLiteConfig.enforceForeignKeys(true);
 
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
@@ -43,8 +48,8 @@ public class ConnectToDB {
     public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                String path = String.format("jdbc:%s:%s%s", ConnectToDB.dbType, ConnectToDB.pathToDb, ConnectToDB.dbName);
-                connection = DriverManager.getConnection(path);
+                String path = String.format("jdbc:%s:%s%s", DatabaseConnectivityProvider.dbType, DatabaseConnectivityProvider.pathToDb, DatabaseConnectivityProvider.dbName);
+                connection = DriverManager.getConnection(path, sqLiteConfig.toProperties());
             }
         } catch (SQLException e) {
             e.printStackTrace();

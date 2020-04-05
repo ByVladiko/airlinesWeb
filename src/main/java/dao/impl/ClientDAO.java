@@ -1,9 +1,9 @@
-package sql.daoImpl;
+package dao.impl;
 
-import dao.DAO;
+import dao.api.DAO;
 import model.*;
-import sql.ConnectToDB;
-import sql.ConvertDate;
+import repository.DatabaseConnectivityProvider;
+import util.DateConverter;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class ClientDAOImpl implements DAO<Client> {
+public class ClientDAO implements DAO<Client> {
 
-    public ClientDAOImpl() {
+    public ClientDAO() {
     }
 
     private static String createClient = "INSERT INTO client VALUES(?, ?, ?, ?)";
@@ -95,7 +95,7 @@ public class ClientDAOImpl implements DAO<Client> {
 
     @Override
     public void create(Client client) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(createClient)) {
             statement.setString(1, client.getId().toString());
             statement.setString(2, client.getFirstName());
@@ -109,7 +109,7 @@ public class ClientDAOImpl implements DAO<Client> {
 
     @Override
     public Client getById(String id) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(getByIdClient)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -122,8 +122,8 @@ public class ClientDAOImpl implements DAO<Client> {
                     ArrayList<Ticket> listTickets = new ArrayList<>();
                     listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
                             new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                    ConvertDate.convert(resultSet.getString("date_of_departure")),
-                                    ConvertDate.convert(resultSet.getString("date_of_arrival")),
+                                    DateConverter.convert(resultSet.getString("date_of_departure")),
+                                    DateConverter.convert(resultSet.getString("date_of_arrival")),
                                     new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                             resultSet.getString("model"),
                                             resultSet.getInt("number_of_seat")),
@@ -135,8 +135,8 @@ public class ClientDAOImpl implements DAO<Client> {
                     while (resultSet.next()) {
                         listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
                                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                        ConvertDate.convert(resultSet.getString("date_departure")),
-                                        ConvertDate.convert(resultSet.getString("date_arrival")),
+                                        DateConverter.convert(resultSet.getString("date_departure")),
+                                        DateConverter.convert(resultSet.getString("date_arrival")),
                                         new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                                 resultSet.getString("model"),
                                                 resultSet.getInt("number_of_seat")),
@@ -158,7 +158,7 @@ public class ClientDAOImpl implements DAO<Client> {
 
     @Override
     public void update(Client client) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateClient)) {
             statement.setString(1, client.getFirstName());
             statement.setString(2, client.getMiddleName());
@@ -174,7 +174,7 @@ public class ClientDAOImpl implements DAO<Client> {
 
     @Override
     public void delete(Client client) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(deleteClient)) {
             statement.setString(1, client.getId().toString());
             statement.execute();
@@ -185,7 +185,7 @@ public class ClientDAOImpl implements DAO<Client> {
 
     @Override
     public List<Client> getAll() {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              Statement statement = connection.createStatement()) {
             List<Client> clientList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(getAllClient);
@@ -198,8 +198,8 @@ public class ClientDAOImpl implements DAO<Client> {
                     ArrayList<Ticket> listTickets = new ArrayList<>();
                     listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
                             new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                    ConvertDate.convert(resultSet.getString("date_departure")),
-                                    ConvertDate.convert(resultSet.getString("date_arrival")),
+                                    DateConverter.convert(resultSet.getString("date_departure")),
+                                    DateConverter.convert(resultSet.getString("date_arrival")),
                                     new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                             resultSet.getString("model"),
                                             resultSet.getInt("number_of_seat")),
@@ -212,8 +212,8 @@ public class ClientDAOImpl implements DAO<Client> {
                         if (client.getId().toString().equals(resultSet.getString("id"))) {
                             listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
                                     new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                            ConvertDate.convert(resultSet.getString("date_departure")),
-                                            ConvertDate.convert(resultSet.getString("date_arrival")),
+                                            DateConverter.convert(resultSet.getString("date_departure")),
+                                            DateConverter.convert(resultSet.getString("date_arrival")),
                                             new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                                     resultSet.getString("model"),
                                                     resultSet.getInt("number_of_seat")),

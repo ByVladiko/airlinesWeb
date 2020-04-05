@@ -1,9 +1,9 @@
-package sql.daoImpl;
+package dao.impl;
 
-import dao.DAO;
+import dao.api.DAO;
 import model.*;
-import sql.ConnectToDB;
-import sql.ConvertDate;
+import repository.DatabaseConnectivityProvider;
+import util.DateConverter;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class TicketDAOImpl implements DAO<Ticket> {
+public class TicketDAO implements DAO<Ticket> {
 
-    public TicketDAOImpl() {
+    public TicketDAO() {
     }
 
     private static String createTicket = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?)";
@@ -82,7 +82,7 @@ public class TicketDAOImpl implements DAO<Ticket> {
 
     @Override
     public void create(Ticket ticket) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(createTicket)) {
             statement.setString(1, ticket.getId().toString());
             statement.setString(2, ticket.getFlight().getId().toString());
@@ -97,15 +97,15 @@ public class TicketDAOImpl implements DAO<Ticket> {
 
     @Override
     public Ticket getById(String id) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(getByIdTicket)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Ticket(UUID.fromString(resultSet.getString("id")),
                                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                        ConvertDate.convert(resultSet.getString("flight_date_of_departure")),
-                        ConvertDate.convert(resultSet.getString("flight_date_of_arrival")),
+                        DateConverter.convert(resultSet.getString("flight_date_of_departure")),
+                        DateConverter.convert(resultSet.getString("flight_date_of_arrival")),
                         new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                 resultSet.getString("airship_model"),
                                 resultSet.getInt("airship_number_of_seat")),
@@ -123,7 +123,7 @@ public class TicketDAOImpl implements DAO<Ticket> {
 
     @Override
     public void update(Ticket ticket) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateTicket)) {
             statement.setString(1, ticket.getFlight().getId().toString());
             statement.setInt(2, ticket.getCategory().getIndex());
@@ -139,7 +139,7 @@ public class TicketDAOImpl implements DAO<Ticket> {
 
     @Override
     public void delete(Ticket ticket) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(deleteTicket)) {
             statement.setString(1, ticket.getId().toString());
             statement.execute();
@@ -150,7 +150,7 @@ public class TicketDAOImpl implements DAO<Ticket> {
 
     @Override
     public List<Ticket> getAll() {
-        try(Connection connection = ConnectToDB.getConnection();
+        try(Connection connection = DatabaseConnectivityProvider.getConnection();
             Statement statement = connection.createStatement())
         {
             List<Ticket> ticketList = new ArrayList<>();
@@ -159,8 +159,8 @@ public class TicketDAOImpl implements DAO<Ticket> {
                 ticketList.add(
                         new Ticket(UUID.fromString(resultSet.getString("id")),
                                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                        ConvertDate.convert(resultSet.getString("flight_date_of_departure")),
-                                        ConvertDate.convert(resultSet.getString("flight_date_of_arrival")),
+                                        DateConverter.convert(resultSet.getString("flight_date_of_departure")),
+                                        DateConverter.convert(resultSet.getString("flight_date_of_arrival")),
                                         new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                                 resultSet.getString("airship_model"),
                                                 resultSet.getInt("airship_number_of_seat")),

@@ -1,8 +1,8 @@
-package sql.daoImpl;
+package dao.impl;
 
-import dao.DAO;
+import dao.api.DAO;
 import model.Airship;
-import sql.ConnectToDB;
+import repository.DatabaseConnectivityProvider;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,10 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class AirshipDAOImpl implements DAO<Airship> {
+public class AirshipDAO implements DAO<Airship> {
 
-    public AirshipDAOImpl() {
-    }
+    public AirshipDAO() {}
 
     private static String createAirship = "INSERT INTO airship VALUES(?, ?, ?)";
     private static String getByIdAirship = "SELECT * FROM airship WHERE id = ?";
@@ -23,7 +22,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public void create(Airship airship) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(createAirship)) {
             statement.setString(1, airship.getId().toString());
             statement.setString(2, airship.getModel());
@@ -36,7 +35,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public Airship getById(String id) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(getByIdAirship)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -53,7 +52,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public void update(Airship airship) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateAirship)) {
             statement.setString(1, airship.getModel());
             statement.setInt(2, airship.getNumberOfSeat());
@@ -68,7 +67,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public void delete(Airship airship) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(deleteAirship)) {
             statement.setString(1, airship.getId().toString());
             statement.execute();
@@ -79,7 +78,7 @@ public class AirshipDAOImpl implements DAO<Airship> {
 
     @Override
     public List<Airship> getAll() {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              Statement statement = connection.createStatement()) {
             List<Airship> airships = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(getAllAirship);

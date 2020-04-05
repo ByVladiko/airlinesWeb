@@ -1,13 +1,13 @@
-package sql;
+package util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ConvertDate {
+public class DateConverter {
 
-    private ConvertDate(){}
+    private DateConverter(){}
 
     public static String convert(Date date) {
         DateFormat sqlFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");

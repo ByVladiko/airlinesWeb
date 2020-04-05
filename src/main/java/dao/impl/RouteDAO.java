@@ -1,8 +1,8 @@
-package sql.daoImpl;
+package dao.impl;
 
-import dao.DAO;
+import dao.api.DAO;
 import model.Route;
-import sql.ConnectToDB;
+import repository.DatabaseConnectivityProvider;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class RouteDAOImpl implements DAO<Route> {
+public class RouteDAO implements DAO<Route> {
 
-    public RouteDAOImpl() {
+    public RouteDAO() {
     }
 
     private static String createRoute = "INSERT INTO route VALUES(?, ?, ?)";
@@ -23,7 +23,7 @@ public class RouteDAOImpl implements DAO<Route> {
 
     @Override
     public void create(Route route) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(createRoute)) {
             statement.setString(1, route.getId().toString());
             statement.setString(2, route.getStartPoint());
@@ -36,7 +36,7 @@ public class RouteDAOImpl implements DAO<Route> {
 
     @Override
     public Route getById(String id) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(getByIdRoute)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -53,7 +53,7 @@ public class RouteDAOImpl implements DAO<Route> {
 
     @Override
     public void update(Route route) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateRoute)) {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
@@ -68,7 +68,7 @@ public class RouteDAOImpl implements DAO<Route> {
 
     @Override
     public void delete(Route route) {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(deleteRoute)) {
             statement.setString(1, route.getId().toString());
             statement.execute();
@@ -79,7 +79,7 @@ public class RouteDAOImpl implements DAO<Route> {
 
     @Override
     public List<Route> getAll() {
-        try (Connection connection = ConnectToDB.getConnection();
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
              Statement statement = connection.createStatement()) {
             List<Route> routes = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(getAllRoute);
