@@ -19,13 +19,15 @@ public class DatabaseConnectivityProvider {
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
+    private static final String PATH_TO_CONNECTION_PROPERTIES = "database.properties";
+
     private DatabaseConnectivityProvider() {
     }
 
     public static void registryDriver() {
         try {
             Properties property = new Properties();
-            property.load(new FileInputStream("database.properties"));
+            property.load(new FileInputStream(PATH_TO_CONNECTION_PROPERTIES));
 
             dbType = property.getProperty("DB_TYPE");
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
