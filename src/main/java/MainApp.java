@@ -1,18 +1,25 @@
-import dao.api.DAO;
-import model.Airship;
+import dao.impl.ClientDAO;
+import dao.impl.TicketDAO;
+import model.Client;
+import model.Ticket;
 import repository.DatabaseConnectivityProvider;
-import dao.impl.AirshipDAO;
+import service.BusinessLogic;
 
-import java.util.UUID;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MainApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         DatabaseConnectivityProvider.registryDriver();
-
-        Airship airship = new Airship();
-        airship.setId(UUID.fromString("e823c8e6-737b-11ea-bc55-0242ac130003")); // Boeing
-
-        DAO<Airship> airshipDAO = new AirshipDAO();
-        airshipDAO.delete(airship);
+        try (Connection connection = DatabaseConnectivityProvider.getConnection()) {
+            BusinessLogic businessLogic = new BusinessLogic();
+            ClientDAO clientDAO = new ClientDAO();
+            TicketDAO ticketDAO = new TicketDAO();
+            Client client = clientDAO.getById("9ffc9e34-0604-4503-bb29-4a923c030ecf");
+            Ticket ticket = ticketDAO.getById("06c96a92-01f6-45b8-a4cc-7d663de30d76");
+            businessLogic.buyTicketToClient(connection, client, ticket);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
