@@ -13,13 +13,14 @@ import java.util.Properties;
 public class DatabaseConnectivityProvider {
 
     private static Connection connection;
+    private static String path;
     private static String dbType;
     private static String pathToDb;
     private static String dbName;
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
-    private static final String PATH_TO_CONNECTION_PROPERTIES = "database.properties";
+    private static final String PATH_TO_CONNECTION_PROPERTIES = "../../../database.properties";
 
     private DatabaseConnectivityProvider() {
     }
@@ -39,6 +40,7 @@ public class DatabaseConnectivityProvider {
 
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
+                path = String.format("jdbc:%s:%s%s", DatabaseConnectivityProvider.dbType, DatabaseConnectivityProvider.pathToDb, DatabaseConnectivityProvider.dbName);
             }
 
         } catch (IOException | SQLException e) {
@@ -49,10 +51,7 @@ public class DatabaseConnectivityProvider {
 
     public static Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                String path = String.format("jdbc:%s:%s%s", DatabaseConnectivityProvider.dbType, DatabaseConnectivityProvider.pathToDb, DatabaseConnectivityProvider.dbName);
-                connection = DriverManager.getConnection(path, sqLiteConfig.toProperties());
-            }
+            return DriverManager.getConnection(path, sqLiteConfig.toProperties());
         } catch (SQLException e) {
             e.printStackTrace();
         }
