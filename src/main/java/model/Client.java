@@ -13,29 +13,42 @@ public class Client implements Serializable {
     private String firstName;
     private String middleName;
     private String lastName;
+    private float bill;
     private List<Ticket> tickets;
 
-    public Client(UUID id, String firstName, String middleName, String lastName, List<Ticket> tickets) {
+    public Client(UUID id, String firstName, String middleName, String lastName, float bill, List<Ticket> tickets) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.bill = bill;
         this.tickets = tickets;
     }
 
-    public Client(String firstName, String middleName, String lastName, List<Ticket> tickets) {
+    public Client(String firstName, String middleName, String lastName, float bill, List<Ticket> tickets) {
         this.id = UUID.randomUUID();
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.bill = bill;
         this.tickets = tickets;
     }
 
-    public Client(UUID id, String firstName, String middleName, String lastName) {
+    public Client(UUID id, String firstName, String middleName, String lastName, float bill) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.bill = bill;
+        this.tickets = new ArrayList<>();
+    }
+
+    public Client(String firstName, String middleName, String lastName, float bill) {
+        this.id = UUID.randomUUID();
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.bill = bill;
         this.tickets = new ArrayList<>();
     }
 
@@ -44,6 +57,7 @@ public class Client implements Serializable {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.bill = 0;
         this.tickets = new ArrayList<>();
     }
 
@@ -94,6 +108,14 @@ public class Client implements Serializable {
         this.tickets = tickets;
     }
 
+    public float getBill() {
+        return bill;
+    }
+
+    public void setBill(float bill) {
+        this.bill = bill;
+    }
+
     @Override
     public String toString() {
         return "Client{" +
@@ -101,6 +123,7 @@ public class Client implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", bill=" + bill +
                 ", tickets=" + tickets +
                 '}';
     }
@@ -129,7 +152,8 @@ public class Client implements Serializable {
             return this.id.equals(client.id)
                     && this.firstName.equals(client.firstName)
                     && this.middleName.equals(client.middleName)
-                    && this.lastName.equals(client.lastName);
+                    && this.lastName.equals(client.lastName)
+                    && this.bill == bill;
         }
 
         return false;
@@ -141,8 +165,9 @@ public class Client implements Serializable {
         result = 31 * result + (this.firstName == null ? 0 : this.firstName.hashCode());
         result = 31 * result + (this.middleName == null ? 0 : this.middleName.hashCode());
         result = 31 * result + (this.lastName == null ? 0 : this.lastName.hashCode());
+        result = 31 * result + Float.hashCode(this.bill);
 
-        for (Ticket ticket : tickets) {
+        for (Ticket ticket : this.tickets) {
             result = 31 * result + ticket.hashCode();
         }
 

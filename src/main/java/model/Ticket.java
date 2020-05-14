@@ -11,22 +11,32 @@ public class Ticket implements Serializable {
     private Flight flight;
     private Category category;
     private float cost;
+    private float baggage;
+    private Status status;
 
-    public Ticket(UUID id, Flight flight, Category category, float cost) {
+    public Ticket(UUID id, Flight flight, Category category, float cost, float baggage, Status status) {
         this.id = id;
         this.flight = flight;
         this.category = category;
         this.cost = cost;
+        this.baggage = baggage;
+        this.status = status;
     }
 
-    public Ticket(Flight flight, Category category, float cost) {
+    public Ticket(Flight flight, Category category, float cost, float baggage, Status status) {
         this.id = UUID.randomUUID();
         this.flight = flight;
         this.category = category;
         this.cost = cost;
+        this.baggage = baggage;
+        this.status = status;
     }
 
     public Ticket() {
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public UUID getId() {
@@ -61,6 +71,22 @@ public class Ticket implements Serializable {
         this.cost = cost;
     }
 
+    public float getBaggage() {
+        return baggage;
+    }
+
+    public void setBaggage(float baggage) {
+        this.baggage = baggage;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +
@@ -68,6 +94,8 @@ public class Ticket implements Serializable {
                 ", flight=" + flight +
                 ", category=" + category +
                 ", cost=" + cost +
+                ", baggage=" + baggage +
+                ", status=" + status +
                 '}';
     }
 
@@ -86,7 +114,8 @@ public class Ticket implements Serializable {
             return id.equals(ticket.id)
                     && flight.equals(ticket.flight)
                     && category.equals(ticket.category)
-                    && cost == ticket.cost;
+                    && cost == ticket.cost
+                    && status.equals(ticket.status);
         }
         return false;
     }

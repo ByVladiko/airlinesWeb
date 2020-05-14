@@ -9,18 +9,25 @@ public class Airship implements Serializable {
 
     private UUID id;
     private String model;
-    private int numberOfSeat;
+    private int economyCategory;
+    private int businessCategory;
+    private int premiumCategory;
+    private int firstCategory;
 
-    public Airship(String model, int numberOfSeat) {
-        this.model = model;
-        this.numberOfSeat = numberOfSeat;
+    public Airship(String model, int economyCategory, int businessCategory, int premiumCategory) {
         this.id = UUID.randomUUID();
+        this.model = model;
+        this.economyCategory = economyCategory;
+        this.businessCategory = businessCategory;
+        this.premiumCategory = premiumCategory;
     }
 
-    public Airship(UUID id, String model, int numberOfSeat) {
+    public Airship(UUID id, String model, int economyCategory, int businessCategory, int premiumCategory) {
         this.id = id;
         this.model = model;
-        this.numberOfSeat = numberOfSeat;
+        this.economyCategory = economyCategory;
+        this.businessCategory = businessCategory;
+        this.premiumCategory = premiumCategory;
     }
 
     public Airship() {
@@ -42,17 +49,39 @@ public class Airship implements Serializable {
         this.model = model;
     }
 
-    public int getNumberOfSeat() {
-        return numberOfSeat;
+    public int getEconomyCategory() {
+        return economyCategory;
     }
 
-    public void setNumberOfSeat(int numberOfSeat) {
-        this.numberOfSeat = numberOfSeat;
+    public void setEconomyCategory(int economyCategory) {
+        this.economyCategory = economyCategory;
+    }
+
+    public int getBusinessCategory() {
+        return businessCategory;
+    }
+
+    public void setBusinessCategory(int businessCategory) {
+        this.businessCategory = businessCategory;
+    }
+
+    public int getPremiumCategory() {
+        return premiumCategory;
+    }
+
+    public void setPremiumCategory(int premiumCategory) {
+        this.premiumCategory = premiumCategory;
     }
 
     @Override
     public String toString() {
-        return String.format("%s(%d)", model, numberOfSeat);
+        return "Airship{" +
+                "id=" + id +
+                ", model='" + model + '\'' +
+                ", economyCategory=" + economyCategory +
+                ", businessCategory=" + businessCategory +
+                ", premiumCategory=" + premiumCategory +
+                '}';
     }
 
     @Override
@@ -67,7 +96,11 @@ public class Airship implements Serializable {
 
         if (obj.getClass() == this.getClass()) {
             Airship airship = (Airship) obj;
-            return id.equals(airship.id) || model.equals(airship.model) || numberOfSeat == airship.numberOfSeat;
+            return id.equals(airship.id)
+                    && model.equals(airship.model)
+                    && economyCategory == airship.economyCategory
+                    && businessCategory == airship.businessCategory
+                    && premiumCategory == airship.premiumCategory;
         }
         return false;
     }
@@ -76,7 +109,9 @@ public class Airship implements Serializable {
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + (model == null ? 0 : model.hashCode());
-        result = 31 * result + numberOfSeat;
+        result = 31 * result + economyCategory;
+        result = 31 * result + businessCategory;
+        result = 31 * result + premiumCategory;
         return result;
     }
 }
