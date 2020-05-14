@@ -5,13 +5,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DAO<T> {
-    void create(T obj) throws SQLException;
 
-    T getById(String id) throws SQLException;
+    void create(final Connection connection, T obj) throws SQLException;
+
+    T getById(final Connection connection, String id) throws SQLException;
 
     void update(final Connection connection, T obj) throws SQLException;
 
-    void delete(T obj) throws SQLException;
+    void delete(final Connection connection, T obj) throws SQLException;
 
-    List<T> getAll() throws SQLException;
+    List<T> getAll(final Connection connection) throws SQLException;
 }

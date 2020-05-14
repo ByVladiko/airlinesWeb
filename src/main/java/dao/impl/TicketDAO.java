@@ -2,7 +2,6 @@ package dao.impl;
 
 import dao.api.DAO;
 import model.*;
-import repository.DatabaseConnectivityProvider;
 import util.DateConverter;
 
 import java.sql.*;
@@ -55,8 +54,7 @@ public class TicketDAO implements DAO<Ticket> {
             "category = ?, " +
             "cost = ?, " +
             "baggage = ?, " +
-            "status = ?, " +
-            "client = ? " +
+            "status = ? " +
             "WHERE id = ?";
     private static final String DELETE_TICKET_BY_ID = "DELETE FROM ticket WHERE id = ?";
     private static final String SELECT_ALL_TICKETS = "SELECT \n" +
@@ -92,9 +90,8 @@ public class TicketDAO implements DAO<Ticket> {
             "                    b.route = d.id\n";
 
     @Override
-    public void create(Ticket ticket) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CREATE_TICKET)) {
+    public void create(final Connection connection, Ticket ticket) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_TICKET)) {
             statement.setString(1, ticket.getId().toString());
             statement.setString(2, ticket.getFlight().getId().toString());
             statement.setInt(3, ticket.getCategory().getIndex());
@@ -107,9 +104,8 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public Ticket getById(String id) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_TICKET_BY_ID)) {
+    public Ticket getById(final Connection connection, String id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_TICKET_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -142,9 +138,11 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setString(1, ticket.getFlight().getId().toString());
             statement.setInt(2, ticket.getCategory().getIndex());
             statement.setFloat(3, ticket.getCost());
-            statement.setString(4, ticket.getId().toString());
+            statement.setFloat(4, ticket.getBaggage());
+            statement.setFloat(5, ticket.getStatus().getIndex());
+            statement.setString(6, ticket.getId().toString());
             if (statement.executeUpdate() == 0) {
-                create(ticket);
+                create(connection, ticket);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -152,9 +150,8 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public void delete(Ticket ticket) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_TICKET_BY_ID)) {
+    public void delete(final Connection connection, Ticket ticket) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_TICKET_BY_ID)) {
             statement.setString(1, ticket.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -163,9 +160,8 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public List<Ticket> getAll() {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             Statement statement = connection.createStatement()) {
+    public List<Ticket> getAll(final Connection connection) {
+        try (Statement statement = connection.createStatement()) {
             List<Ticket> ticketList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_TICKETS);
             while (resultSet.next()) {

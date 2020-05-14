@@ -2,7 +2,6 @@ package dao.impl;
 
 import dao.api.DAO;
 import model.Route;
-import repository.DatabaseConnectivityProvider;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,9 +21,8 @@ public class RouteDAO implements DAO<Route> {
     private static final String SELECT_ALL_ROUTES = "SELECT * FROM route";
 
     @Override
-    public void create(Route route) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CREATE_ROUTE)) {
+    public void create(final Connection connection, Route route) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_ROUTE)) {
             statement.setString(1, route.getId().toString());
             statement.setString(2, route.getStartPoint());
             statement.setString(3, route.getEndPoint());
@@ -35,9 +33,8 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public Route getById(String id) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
+    public Route getById(Connection connection, String id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -58,7 +55,7 @@ public class RouteDAO implements DAO<Route> {
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());
             if (statement.executeUpdate() == 0) {
-                create(route);
+                create(connection, route);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,9 +63,8 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public void delete(Route route) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_ROUTE)) {
+    public void delete(final Connection connection, Route route) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_ROUTE)) {
             statement.setString(1, route.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -77,9 +73,8 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public List<Route> getAll() {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             Statement statement = connection.createStatement()) {
+    public List<Route> getAll(final Connection connection) {
+        try (Statement statement = connection.createStatement()) {
             List<Route> routes = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_ROUTES);
             while (resultSet.next()) {

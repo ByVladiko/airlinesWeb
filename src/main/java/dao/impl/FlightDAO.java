@@ -4,7 +4,6 @@ import dao.api.DAO;
 import model.Airship;
 import model.Flight;
 import model.Route;
-import repository.DatabaseConnectivityProvider;
 import util.DateConverter;
 
 import java.sql.*;
@@ -81,9 +80,8 @@ public class FlightDAO implements DAO<Flight> {
             "                    c.id_route = d.id";
 
     @Override
-    public void create(Flight flight) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CREATE_FLIGHT);) {
+    public void create(final Connection connection, Flight flight) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_FLIGHT);) {
             statement.setString(1, flight.getId().toString());
             statement.setString(2, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(3, DateConverter.convert(flight.getDateOfArrival()));
@@ -95,9 +93,8 @@ public class FlightDAO implements DAO<Flight> {
     }
 
     @Override
-    public Flight getById(String id) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
+    public Flight getById(Connection connection, String id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -127,7 +124,7 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(3, flight.getAirship().getId().toString());
             statement.setString(4, flight.getId().toString());
             if (statement.executeUpdate() == 0) {
-                create(flight);
+                create(connection, flight);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -135,9 +132,8 @@ public class FlightDAO implements DAO<Flight> {
     }
 
     @Override
-    public void delete(Flight flight) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_FLIGHT)) {
+    public void delete(final Connection connection, Flight flight) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_FLIGHT)) {
             statement.setString(1, flight.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -146,9 +142,8 @@ public class FlightDAO implements DAO<Flight> {
     }
 
     @Override
-    public List<Flight> getAll() {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             Statement statement = connection.createStatement()) {
+    public List<Flight> getAll(final Connection connection) {
+        try (Statement statement = connection.createStatement()) {
             List<Flight> flightList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_FLIGHTS);
             while (resultSet.next()) {

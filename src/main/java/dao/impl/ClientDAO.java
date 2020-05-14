@@ -2,7 +2,6 @@ package dao.impl;
 
 import dao.api.DAO;
 import model.*;
-import repository.DatabaseConnectivityProvider;
 import util.DateConverter;
 
 import java.sql.*;
@@ -115,9 +114,8 @@ public class ClientDAO implements DAO<Client> {
             "                    ORDER BY a.id";
 
     @Override
-    public void create(Client client) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CREATE_CLIENT)) {
+    public void create(final Connection connection, Client client) {
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_CLIENT)) {
             statement.setString(1, client.getId().toString());
             statement.setString(2, client.getFirstName());
             statement.setString(3, client.getMiddleName());
@@ -130,9 +128,8 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public Client getById(String id) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
+    public Client getById(Connection connection, String id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -158,14 +155,15 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public void update(Connection connection, Client client) {
+    public void update(final Connection connection, Client client) {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_CLIENT)) {
             statement.setString(1, client.getFirstName());
             statement.setString(2, client.getMiddleName());
             statement.setString(3, client.getLastName());
-            statement.setString(4, client.getId().toString());
+            statement.setFloat(4, client.getBill());
+            statement.setString(5, client.getId().toString());
             if (statement.executeUpdate() == 0) {
-                create(client);
+                create(connection, client);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,9 +171,8 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public void delete(Client client) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_CLIENT_BY_ID)) {
+    public void delete(final Connection connection, Client client) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_CLIENT_BY_ID)) {
             statement.setString(1, client.getId().toString());
             statement.execute();
         } catch (SQLException e) {
@@ -184,9 +181,8 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public List<Client> getAll() {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             Statement statement = connection.createStatement()) {
+    public List<Client> getAll(final Connection connection) {
+        try (Statement statement = connection.createStatement()) {
             List<Client> clientList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_CLIENTS);
             while (resultSet.next()) {
