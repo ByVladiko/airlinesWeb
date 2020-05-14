@@ -12,7 +12,6 @@ import java.util.Properties;
 
 public class DatabaseConnectivityProvider {
 
-    private static Connection connection;
     private static String path;
     private static String dbType;
     private static String pathToDb;
@@ -49,13 +48,8 @@ public class DatabaseConnectivityProvider {
         }
     }
 
-    public static Connection getConnection() {
-        try {
-            return DriverManager.getConnection(path, sqLiteConfig.toProperties());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection;
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(path, sqLiteConfig.toProperties());
     }
 
 }

@@ -12,7 +12,6 @@ public class Airship implements Serializable {
     private int economyCategory;
     private int businessCategory;
     private int premiumCategory;
-    private int firstCategory;
 
     public Airship(String model, int economyCategory, int businessCategory, int premiumCategory) {
         this.id = UUID.randomUUID();
