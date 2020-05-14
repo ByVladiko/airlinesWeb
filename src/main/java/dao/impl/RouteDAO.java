@@ -52,9 +52,8 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public void update(Route route) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_ROUTE)) {
+    public void update(final Connection connection, Route route) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_ROUTE)) {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());

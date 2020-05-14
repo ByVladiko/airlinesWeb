@@ -16,83 +16,103 @@ public class ClientDAO implements DAO<Client> {
     public ClientDAO() {
     }
 
-    private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?)";
-    private static final String GET_CLIENT_BY_ID = "SELECT\n" +
-            "        *\n" +
-            "FROM \n" +
-            "        client a\n" +
-            "LEFT JOIN\n" +
-            "        (SELECT\n" +
-            "            b.id as ticket_id,\n" +
-            "            b.client,\n" +
-            "            b.category, \n" +
-            "            b.cost,\n" +
-            "            c.id as flight_id, \n" +
-            "            c.date_of_departure, \n" +
-            "            c.date_of_arrival, \n" +
-            "            d.id as airship_id, \n" +
-            "            d.model, \n" +
-            "            d.number_of_seat, \n" +
-            "            e.id as route_id, \n" +
-            "            e.start_point, \n" +
-            "            e.end_point\n" +
-            "        FROM\n" +
-            "            ticket b\n" +
-            "        INNER JOIN\n" +
-            "            flight c\n" +
-            "        ON\n" +
-            "            b.flight = c.id\n" +
-            "        INNER JOIN\n" +
-            "            airship d\n" +
-            "        ON\n" +
-            "                c.airship = d.id\n" +
-            "        INNER JOIN\n" +
-            "                route e\n" +
-            "        ON\n" +
-            "                c.route = e.id) f\n" +
-            "        ON \n" +
-            "            f.client = a.id\n" +
-            "        WHERE a.id = ?\n" +
-            "        ORDER BY a.id";
+    private static Connection connection;
 
-    private static final String UPDATE_CLIENT = "UPDATE client SET first_name = ?, middle_name = ?, last_name = ? WHERE id = ?";
+    private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?, ?)";
+    private static final String GET_CLIENT_BY_ID = "SELECT  \n" +
+            "                                *  \n" +
+            "                        FROM   \n" +
+            "                                client a  \n" +
+            "                        LEFT JOIN  \n" +
+            "                                (SELECT  \n" +
+            "                                    b.id as ticket_id,  \n" +
+            "                                    b.client,  \n" +
+            "                                    b.category,   \n" +
+            "                                    b.cost, \n" +
+            "                                    b.baggage, \n" +
+            "                                    b.status,  \n" +
+            "                                    c.id as flight_id,   \n" +
+            "                                    c.date_of_departure,   \n" +
+            "                                    c.date_of_arrival, \n" +
+            "                                    d.id as airship_id, \n" +
+            "                                    d.model, \n" +
+            "                                    d.economy_category, \n" +
+            "                                    d.business_category, \n" +
+            "                                    d.premium_category, \n" +
+            "                                    e.id as route_id, \n" +
+            "                                    e.start_point, \n" +
+            "                                    e.end_point \n" +
+            "                                FROM  \n" +
+            "                                    ticket b  \n" +
+            "                                INNER JOIN  \n" +
+            "                                    flight c  \n" +
+            "                                ON  \n" +
+            "                                    b.flight = c.id \n" +
+            "                                INNER JOIN \n" +
+            "                                    airship d  \n" +
+            "                                ON \n" +
+            "                                    c.airship = d.id \n" +
+            "                                INNER JOIN \n" +
+            "                                    route e \n" +
+            "                                ON \n" +
+            "                                    c.route = e.id) f \n" +
+            "                                ON   \n" +
+            "                                    f.client = a.id\n" +
+            "                                WHERE \n" +
+            "                                    a.id = ?  \n" +
+            "                                ORDER BY a.id";
+
+    private static final String UPDATE_CLIENT = "UPDATE client " +
+            "SET first_name = ?, " +
+            "middle_name = ?, " +
+            "last_name = ?, " +
+            "bill = ? " +
+            "WHERE id = ?";
     private static final String DELETE_CLIENT_BY_ID = "DELETE FROM client WHERE id = ?";
-    private static final String SELECT_ALL_CLIENTS = "SELECT\n" +
-            "        *\n" +
-            "FROM \n" +
-            "        client a\n" +
-            "LEFT JOIN\n" +
-            "        (SELECT\n" +
-            "            b.id as ticket_id,\n" +
-            "            b.client,\n" +
-            "            b.category, \n" +
-            "            b.cost,\n" +
-            "            c.id as flight_id, \n" +
-            "            c.date_of_departure, \n" +
-            "            c.date_of_arrival, \n" +
-            "            d.id as airship_id, \n" +
-            "            d.model, \n" +
-            "            d.number_of_seat, \n" +
-            "            e.id as route_id, \n" +
-            "            e.start_point, \n" +
-            "            e.end_point\n" +
-            "        FROM\n" +
-            "            ticket b\n" +
-            "        INNER JOIN\n" +
-            "            flight c\n" +
-            "        ON\n" +
-            "            b.flight = c.id\n" +
-            "        INNER JOIN\n" +
-            "            airship d\n" +
-            "        ON\n" +
-            "                c.airship = d.id\n" +
-            "        INNER JOIN\n" +
-            "                route e\n" +
-            "        ON\n" +
-            "                c.route = e.id) f\n" +
-            "        ON \n" +
-            "            f.client = a.id\n" +
-            "        ORDER BY a.id";
+    private static final String SELECT_ALL_CLIENTS = "SELECT \n" +
+            "                    * \n" +
+            "            FROM  \n" +
+            "                    client a \n" +
+            "            LEFT JOIN \n" +
+            "                    (SELECT \n" +
+            "                        b.id as ticket_id, \n" +
+            "                        b.client, \n" +
+            "                        b.category,  \n" +
+            "                        b.cost,\n" +
+            "                        b.baggage,\n" +
+            "                        b.status, \n" +
+            "                        c.id as flight_id,  \n" +
+            "                        c.date_of_departure,  \n" +
+            "                        c.date_of_arrival,\n" +
+            "                        d.id as airship_id,\n" +
+            "                        d.model,\n" +
+            "                        d.economy_category,\n" +
+            "                        d.business_category,\n" +
+            "                        d.premium_category,\n" +
+            "                        f.id as route_id,\n" +
+            "                        f.start_point,\n" +
+            "                        f.end_point\n" +
+            "                    FROM \n" +
+            "                        ticket b \n" +
+            "                    INNER JOIN \n" +
+            "                        flight c \n" +
+            "                    ON \n" +
+            "                        b.flight = c.id\n" +
+            "                        INNER JOIN\n" +
+            "                        airship d \n" +
+            "                        ON\n" +
+            "                        c.airship = d.id\n" +
+            "                    INNER JOIN\n" +
+            "                        flight_route e\n" +
+            "                        ON\n" +
+            "                        c.id = e.id_flight\n" +
+            "                        INNER JOIN\n" +
+            "                        route f\n" +
+            "                        ON\n" +
+            "                        e.id_route = f.id) g\n" +
+            "                        ON  \n" +
+            "                        g.client = a.id \n" +
+            "                    ORDER BY a.id";
 
     @Override
     public void create(Client client) {
@@ -102,6 +122,7 @@ public class ClientDAO implements DAO<Client> {
             statement.setString(2, client.getFirstName());
             statement.setString(3, client.getMiddleName());
             statement.setString(4, client.getLastName());
+            statement.setFloat(5, client.getBill());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,34 +139,13 @@ public class ClientDAO implements DAO<Client> {
                 Client client = new Client(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("first_name"),
                         resultSet.getString("middle_name"),
-                        resultSet.getString("last_name"));
+                        resultSet.getString("last_name"),
+                        resultSet.getFloat("bill"));
                 if (resultSet.getString("ticket_id") != null) {
                     ArrayList<Ticket> listTickets = new ArrayList<>();
-                    listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
-                            new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                    DateConverter.convert(resultSet.getString("date_of_departure")),
-                                    DateConverter.convert(resultSet.getString("date_of_arrival")),
-                                    new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                            resultSet.getString("model"),
-                                            resultSet.getInt("number_of_seat")),
-                                    new Route(UUID.fromString(resultSet.getString("route_id")),
-                                            resultSet.getString("start_point"),
-                                            resultSet.getString("end_point"))),
-                            Category.byOrdinal(resultSet.getInt("category")),
-                            resultSet.getFloat("cost")));
+                    listTickets.add(createTicket(resultSet));
                     while (resultSet.next()) {
-                        listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
-                                new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                        DateConverter.convert(resultSet.getString("date_departure")),
-                                        DateConverter.convert(resultSet.getString("date_arrival")),
-                                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                                resultSet.getString("model"),
-                                                resultSet.getInt("number_of_seat")),
-                                        new Route(UUID.fromString(resultSet.getString("route_id")),
-                                                resultSet.getString("start_point"),
-                                                resultSet.getString("end_point"))),
-                                Category.byOrdinal(resultSet.getInt("category")),
-                                resultSet.getFloat("cost")));
+                        listTickets.add(createTicket(resultSet));
                     }
                     client.setTickets(listTickets);
                 }
@@ -158,9 +158,8 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public void update(Client client) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_CLIENT)) {
+    public void update(Connection connection, Client client) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_CLIENT)) {
             statement.setString(1, client.getFirstName());
             statement.setString(2, client.getMiddleName());
             statement.setString(3, client.getLastName());
@@ -194,35 +193,14 @@ public class ClientDAO implements DAO<Client> {
                 Client client = new Client(UUID.fromString(resultSet.getString("id")),
                         resultSet.getString("first_name"),
                         resultSet.getString("middle_name"),
-                        resultSet.getString("last_name"));
+                        resultSet.getString("last_name"),
+                        resultSet.getFloat("bill"));
                 if (resultSet.getString("ticket_id") != null) {
                     ArrayList<Ticket> listTickets = new ArrayList<>();
-                    listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
-                            new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                    DateConverter.convert(resultSet.getString("date_departure")),
-                                    DateConverter.convert(resultSet.getString("date_arrival")),
-                                    new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                            resultSet.getString("model"),
-                                            resultSet.getInt("number_of_seat")),
-                                    new Route(UUID.fromString(resultSet.getString("route_id")),
-                                            resultSet.getString("start_point"),
-                                            resultSet.getString("end_point"))),
-                            Category.byOrdinal(resultSet.getInt("category")),
-                            resultSet.getFloat("cost")));
+                    listTickets.add(createTicket(resultSet));
                     while (resultSet.next()) {
                         if (client.getId().toString().equals(resultSet.getString("id"))) {
-                            listTickets.add(new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
-                                    new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                            DateConverter.convert(resultSet.getString("date_departure")),
-                                            DateConverter.convert(resultSet.getString("date_arrival")),
-                                            new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                                    resultSet.getString("model"),
-                                                    resultSet.getInt("number_of_seat")),
-                                            new Route(UUID.fromString(resultSet.getString("route_id")),
-                                                    resultSet.getString("start_point"),
-                                                    resultSet.getString("end_point"))),
-                                    Category.byOrdinal(resultSet.getInt("category")),
-                                    resultSet.getFloat("cost")));
+                            listTickets.add(createTicket(resultSet));
                         } else {
                             resultSet.previous();
                             break;
@@ -237,6 +215,25 @@ public class ClientDAO implements DAO<Client> {
             e.printStackTrace();
             return Collections.emptyList();
         }
+    }
+
+    private Ticket createTicket(ResultSet resultSet) throws SQLException {
+        return new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
+                new Flight(UUID.fromString(resultSet.getString("flight_id")),
+                        DateConverter.convert(resultSet.getString("date_of_departure")),
+                        DateConverter.convert(resultSet.getString("date_of_arrival")),
+                        new Airship(UUID.fromString(resultSet.getString("id")),
+                                resultSet.getString("model"),
+                                resultSet.getInt("economy_category"),
+                                resultSet.getInt("business_category"),
+                                resultSet.getInt("premium_category")),
+                        new Route(UUID.fromString(resultSet.getString("route_id")),
+                                resultSet.getString("start_point"),
+                                resultSet.getString("end_point"))),
+                Category.byOrdinal(resultSet.getInt("category")),
+                resultSet.getFloat("cost"),
+                resultSet.getFloat("baggage"),
+                Status.byOrdinal(resultSet.getInt("status")));
     }
 
 }

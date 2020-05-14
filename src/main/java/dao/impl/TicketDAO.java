@@ -18,67 +18,78 @@ public class TicketDAO implements DAO<Ticket> {
 
     private static final String CREATE_TICKET = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?)";
     private static final String GET_TICKET_BY_ID = "SELECT \n" +
-            "        a.id,\n" +
-            "        a.category,\n" +
-            "        a.cost,\n" +
-            "        b.id as \"flight_id\",\n" +
-            "        b.date_of_departure as \"flight_date_of_departure\",\n" +
-            "        b.date_of_arrival as \"flight_date_of_arrival\",\n" +
-            "        c.id as \"airship_id\",\n" +
-            "        c.model as \"airship_model\",\n" +
-            "        c.number_of_seat as \"airship_number_of_seat\",\n" +
-            "        d.id as \"route_id\",\n" +
-            "        d.start_point as \"route_start_point\",\n" +
-            "        d.end_point as \"route_end_point\"\n" +
-            "FROM\n" +
-            "        ticket a\n" +
-            "INNER JOIN\n" +
-            "        flight b\n" +
-            "ON\n" +
-            "        a.flight = b.id\n" +
-            "INNER JOIN \n" +
-            "        airship c\n" +
-            "ON\n" +
-            "        b.airship = c.id\n" +
-            "INNER JOIN\n" +
-            "        route d\n" +
-            "ON\n" +
-            "        b.route = d.id\n" +
-            "WHERE\n" +
-            "        a.id = ?";
+            "                    a.id,\n" +
+            "                    a.category,\n" +
+            "                    a.cost,\n" +
+            "                    a.baggage,\n" +
+            "                    a.status,\n" +
+            "                    b.id as flight_id,\n" +
+            "                    b.date_of_departure,\n" +
+            "                    b.date_of_arrival,\n" +
+            "                    c.id as airship_id,\n" +
+            "                    c.model as model,\n" +
+            "                    c.business_category,\n" +
+            "                    c.economy_category,\n" +
+            "                    c.premium_category,\n" +
+            "                    d.id as route_id,\n" +
+            "                    d.start_point,\n" +
+            "                    d.end_point\n" +
+            "            FROM\n" +
+            "                    ticket a\n" +
+            "            INNER JOIN\n" +
+            "                    flight b\n" +
+            "            ON\n" +
+            "                    a.flight = b.id\n" +
+            "            INNER JOIN \n" +
+            "                    airship c\n" +
+            "            ON\n" +
+            "                    b.airship = c.id\n" +
+            "            INNER JOIN\n" +
+            "                    route d\n" +
+            "            ON\n" +
+            "                    b.route = d.id\n" +
+            "            WHERE\n" +
+            "                    a.id = ?";
     private static final String UPDATE_TICKET = "UPDATE ticket SET " +
             "flight = ?, " +
             "category = ?, " +
             "cost = ?, " +
+            "baggage = ?, " +
+            "status = ?, " +
+            "client = ? " +
             "WHERE id = ?";
     private static final String DELETE_TICKET_BY_ID = "DELETE FROM ticket WHERE id = ?";
     private static final String SELECT_ALL_TICKETS = "SELECT \n" +
-            "        a.id,\n" +
-            "        a.category,\n" +
-            "        a.cost,\n" +
-            "        b.id as \"flight_id\",\n" +
-            "        b.date_of_departure as \"flight_date_of_departure\",\n" +
-            "        b.date_of_arrival as \"flight_date_of_arrival\",\n" +
-            "        c.id as \"airship_id\",\n" +
-            "        c.model as \"airship_model\",\n" +
-            "        c.number_of_seat as \"airship_number_of_seat\",\n" +
-            "        d.id as \"route_id\",\n" +
-            "        d.start_point as \"route_start_point\",\n" +
-            "        d.end_point as \"route_end_point\"\n" +
-            "FROM\n" +
-            "        ticket a\n" +
-            "INNER JOIN\n" +
-            "        flight b\n" +
-            "ON\n" +
-            "        a.flight = b.id\n" +
-            "INNER JOIN \n" +
-            "        airship c\n" +
-            "ON\n" +
-            "        b.airship = c.id\n" +
-            "INNER JOIN\n" +
-            "        route d\n" +
-            "ON\n" +
-            "        b.route = d.id";
+            "                    a.id,\n" +
+            "                    a.category,\n" +
+            "                    a.cost,\n" +
+            "                    a.baggage,\n" +
+            "                    a.status,\n" +
+            "                    b.id as flight_id,\n" +
+            "                    b.date_of_departure,\n" +
+            "                    b.date_of_arrival,\n" +
+            "                    c.id as airship_id,\n" +
+            "                    c.model as airship_model,\n" +
+            "                    c.business_category,\n" +
+            "                    c.economy_category,\n" +
+            "                    c.premium_category,\n" +
+            "                    d.id as route_id,\n" +
+            "                    d.start_point,\n" +
+            "                    d.end_point\n" +
+            "            FROM\n" +
+            "                    ticket a\n" +
+            "            INNER JOIN\n" +
+            "                    flight b\n" +
+            "            ON\n" +
+            "                    a.flight = b.id\n" +
+            "            INNER JOIN \n" +
+            "                    airship c\n" +
+            "            ON\n" +
+            "                    b.airship = c.id\n" +
+            "            INNER JOIN\n" +
+            "                    route d\n" +
+            "            ON\n" +
+            "                    b.route = d.id\n";
 
     @Override
     public void create(Ticket ticket) {
@@ -103,17 +114,21 @@ public class TicketDAO implements DAO<Ticket> {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Ticket(UUID.fromString(resultSet.getString("id")),
-                                new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                        DateConverter.convert(resultSet.getString("flight_date_of_departure")),
-                        DateConverter.convert(resultSet.getString("flight_date_of_arrival")),
-                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                resultSet.getString("airship_model"),
-                                resultSet.getInt("airship_number_of_seat")),
-                        new Route(UUID.fromString(resultSet.getString("route_id")),
-                                resultSet.getString("route_start_point"),
-                                resultSet.getString("route_end_point"))),
+                        new Flight(UUID.fromString(resultSet.getString("flight_id")),
+                                DateConverter.convert(resultSet.getString("date_of_departure")),
+                                DateConverter.convert(resultSet.getString("date_of_arrival")),
+                                new Airship(UUID.fromString(resultSet.getString("airship_id")),
+                                        resultSet.getString("model"),
+                                        resultSet.getInt("economy_category"),
+                                        resultSet.getInt("business_category"),
+                                        resultSet.getInt("premium_category")),
+                                new Route(UUID.fromString(resultSet.getString("route_id")),
+                                        resultSet.getString("start_point"),
+                                        resultSet.getString("end_point"))),
                         Category.byOrdinal(resultSet.getInt("category")),
-                        resultSet.getFloat("cost"));
+                        resultSet.getFloat("cost"),
+                        resultSet.getFloat("baggage"),
+                        Status.byOrdinal(resultSet.getInt("status")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,9 +137,8 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public void update(Ticket ticket) {
-        try (Connection connection = DatabaseConnectivityProvider.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_TICKET)) {
+    public void update(final Connection connection, Ticket ticket) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_TICKET)) {
             statement.setString(1, ticket.getFlight().getId().toString());
             statement.setInt(2, ticket.getCategory().getIndex());
             statement.setFloat(3, ticket.getCost());
@@ -150,25 +164,28 @@ public class TicketDAO implements DAO<Ticket> {
 
     @Override
     public List<Ticket> getAll() {
-        try(Connection connection = DatabaseConnectivityProvider.getConnection();
-            Statement statement = connection.createStatement())
-        {
+        try (Connection connection = DatabaseConnectivityProvider.getConnection();
+             Statement statement = connection.createStatement()) {
             List<Ticket> ticketList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_TICKETS);
             while (resultSet.next()) {
                 ticketList.add(
-                        new Ticket(UUID.fromString(resultSet.getString("id")),
+                        new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
                                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                        DateConverter.convert(resultSet.getString("flight_date_of_departure")),
-                                        DateConverter.convert(resultSet.getString("flight_date_of_arrival")),
-                                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                                resultSet.getString("airship_model"),
-                                                resultSet.getInt("airship_number_of_seat")),
+                                        DateConverter.convert(resultSet.getString("date_of_departure")),
+                                        DateConverter.convert(resultSet.getString("date_of_arrival")),
+                                        new Airship(UUID.fromString(resultSet.getString("id")),
+                                                resultSet.getString("model"),
+                                                resultSet.getInt("economy_category"),
+                                                resultSet.getInt("business_category"),
+                                                resultSet.getInt("premium_category")),
                                         new Route(UUID.fromString(resultSet.getString("route_id")),
-                                                resultSet.getString("route_start_point"),
-                                                resultSet.getString("route_end_point"))),
+                                                resultSet.getString("start_point"),
+                                                resultSet.getString("end_point"))),
                                 Category.byOrdinal(resultSet.getInt("category")),
-                                resultSet.getFloat("cost")));
+                                resultSet.getFloat("cost"),
+                                resultSet.getFloat("baggage"),
+                                Status.byOrdinal(resultSet.getInt("status"))));
             }
             return ticketList;
         } catch (SQLException e) {
