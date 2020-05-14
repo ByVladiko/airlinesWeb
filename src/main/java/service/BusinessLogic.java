@@ -11,22 +11,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class BusinessLogic {
 
     public void buyTicketToClient(final Connection connection, Client client, Ticket ticket) throws SQLException {
         try {
             connection.setAutoCommit(false);
+            checkTicketForBuying(connection, ticket);
             reserveTicket(connection, ticket);
             connection.setSavepoint("RESERVED");
             addTicketToClient(connection, client, ticket);
             connection.setSavepoint("ADDED");
             buyTicket(connection, client, ticket);
             connection.setSavepoint("SOLD");
-            System.out.println(client.getTickets());
-            connection.rollback();
-            System.out.println(client.getTickets());
+            connection.commit();
         } catch (SQLException | BusinessLogicException e) {
             e.printStackTrace();
             connection.rollback();
@@ -49,26 +47,32 @@ public class BusinessLogic {
     }
 
     private void addTicketToClient(final Connection connection, Client client, Ticket ticket) {
-        ClientDAO clientDAO = new ClientDAO();
-        List<Ticket> ticketList = client.getTickets();
-        ticketList.add(ticket);
-        client.setTickets(ticketList);
-        clientDAO.update(connection, client);
+        String queryCountTicketOfCategory = "UPDATE ticket SET client = ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(queryCountTicketOfCategory)) {
+            statement.setString(1, client.getId().toString());
+            statement.setString(2, ticket.getId().toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void buyTicket(final Connection connection, Client client, Ticket ticket) throws BusinessLogicException {
+    private void buyTicket(final Connection connection, Client client, Ticket ticket) throws BusinessLogicException, SQLException {
         ClientDAO clientDAO = new ClientDAO();
+        TicketDAO ticketDAO = new TicketDAO();
         float billOfClient = client.getBill();
         if (billOfClient < ticket.getCost()) {
-            throw new BusinessLogicException("Not enough funds in the account");
+            throw new BusinessLogicException("Not enough funds on the account");
         }
         checkTicketForBuying(connection, ticket);
         client.setBill(billOfClient - ticket.getCost());
         clientDAO.update(connection, client);
+        ticket.setStatus(Status.SOLD);
+        ticketDAO.update(connection, ticket);
     }
 
     private void checkTicketForBuying(final Connection connection, Ticket ticket) throws BusinessLogicException {
-        String queryCountTicketOfCategory = "SELECT COUNT(id) as count FROM ticket WHERE ticket.category = ?";
+        String queryCountTicketOfCategory = "SELECT COUNT(id) as count FROM ticket WHERE category = ?";
         try (PreparedStatement statement = connection.prepareStatement(queryCountTicketOfCategory)) {
             statement.setInt(1, ticket.getCategory().getIndex());
             ResultSet resultSet = statement.executeQuery();
