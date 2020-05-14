@@ -1,6 +1,7 @@
 package model;
 
 public enum Category {
+
     ECONOMY, PREMIUM, FIRST, BUSINESS;
 
     public static Category byOrdinal(int ord) {
