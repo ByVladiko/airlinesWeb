@@ -114,7 +114,7 @@ public class TicketDAO implements DAO<Ticket> {
                                 DateConverter.convert(resultSet.getString("date_of_departure")),
                                 DateConverter.convert(resultSet.getString("date_of_arrival")),
                                 new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                        resultSet.getString("model"),
+                                        resultSet.getString("airship_model"),
                                         resultSet.getInt("economy_category"),
                                         resultSet.getInt("business_category"),
                                         resultSet.getInt("premium_category")),
@@ -166,12 +166,12 @@ public class TicketDAO implements DAO<Ticket> {
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_TICKETS);
             while (resultSet.next()) {
                 ticketList.add(
-                        new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
+                        new Ticket(UUID.fromString(resultSet.getString("id")),
                                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
                                         DateConverter.convert(resultSet.getString("date_of_departure")),
                                         DateConverter.convert(resultSet.getString("date_of_arrival")),
                                         new Airship(UUID.fromString(resultSet.getString("id")),
-                                                resultSet.getString("model"),
+                                                resultSet.getString("airship_model"),
                                                 resultSet.getInt("economy_category"),
                                                 resultSet.getInt("business_category"),
                                                 resultSet.getInt("premium_category")),

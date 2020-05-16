@@ -17,67 +17,60 @@ public class FlightDAO implements DAO<Flight> {
     public FlightDAO() {
     }
 
-    private static final String CREATE_FLIGHT = "INSERT INTO flight VALUES(?, ?, ?, ?)";
+    private static final String CREATE_FLIGHT = "INSERT INTO flight VALUES(?, ?, ?, ?, ?)";
     private static final String GET_FLIGHT_BY_ID = "SELECT \n" +
-            "                    a.id as flight_id, \n" +
-            "                    a.date_of_departure, \n" +
-            "                    a.date_of_arrival, \n" +
-            "                    b.id as airship_id, \n" +
-            "                    b.model, \n" +
-            "                    b.economy_category,\n" +
-            "                    b.business_category,\n" +
-            "                    b.premium_category,\n" +
-            "                    d.id as route_id, \n" +
-            "                    d.start_point, \n" +
-            "                    d.end_point\n" +
-            "            FROM \n" +
-            "                    flight a \n" +
-            "            INNER JOIN  \n" +
-            "                    airship b \n" +
-            "            ON \n" +
-            "                    a.airship = b.id \n" +
-            "            INNER JOIN \n" +
-            "                    flight_route c \n" +
-            "            ON \n" +
-            "                    a.id = c.id_flight\n" +
-            "            INNER JOIN\n" +
-            "                    route d\n" +
-            "            ON\n" +
-            "                    c.id_route = d.id\n" +
-            "            WHERE\n" +
-            "                    a.id = ?";
+            "                                            a.id as flight_id, \n" +
+            "                                            a.date_of_departure, \n" +
+            "                                            a.date_of_arrival, \n" +
+            "                                            b.id as airship_id, \n" +
+            "                                            b.model, \n" +
+            "                                            b.economy_category,\n" +
+            "                                            b.business_category,\n" +
+            "                                            b.premium_category,\n" +
+            "                                            c.id as route_id, \n" +
+            "                                            c.start_point, \n" +
+            "                                            c.end_point\n" +
+            "                                    FROM \n" +
+            "                                            flight a \n" +
+            "                                    INNER JOIN  \n" +
+            "                                            airship b \n" +
+            "                                    ON \n" +
+            "                                            a.airship = b.id \n" +
+            "                                    INNER JOIN \n" +
+            "                                           route c \n" +
+            "                                    ON \n" +
+            "                                            a.route = c.id \n" +
+            "                        WHERE\n" +
+            "                                a.id = ?";
     private static final String UPDATE_FLIGHT = "UPDATE flight SET "
             + "date_of_departure = ?, "
             + "date_of_arrival = ?, "
             + "airship = ?, "
+            + "route = ? "
             + "WHERE id = ?";
     private static final String DELETE_FLIGHT = "DELETE FROM flight WHERE id = ?";
     private static final String SELECT_ALL_FLIGHTS = "SELECT \n" +
-            "                    a.id as flight_id, \n" +
-            "                    a.date_of_departure, \n" +
-            "                    a.date_of_arrival, \n" +
-            "                    b.id as airship_id, \n" +
-            "                    b.model, \n" +
-            "                    b.economy_category,\n" +
-            "                    b.business_category,\n" +
-            "                    b.premium_category,\n" +
-            "                    d.id as route_id, \n" +
-            "                    d.start_point, \n" +
-            "                    d.end_point\n" +
-            "            FROM \n" +
-            "                    flight a \n" +
-            "            INNER JOIN  \n" +
-            "                    airship b \n" +
-            "            ON \n" +
-            "                    a.airship = b.id \n" +
-            "            INNER JOIN \n" +
-            "                    flight_route c \n" +
-            "            ON \n" +
-            "                    a.id = c.id_flight\n" +
-            "            INNER JOIN\n" +
-            "                    route d\n" +
-            "            ON\n" +
-            "                    c.id_route = d.id";
+            "                                a.id as flight_id, \n" +
+            "                                a.date_of_departure, \n" +
+            "                                a.date_of_arrival, \n" +
+            "                                b.id as airship_id, \n" +
+            "                                b.model, \n" +
+            "                                b.economy_category,\n" +
+            "                                b.business_category,\n" +
+            "                                b.premium_category,\n" +
+            "                                c.id as route_id, \n" +
+            "                                c.start_point, \n" +
+            "                                c.end_point\n" +
+            "                        FROM \n" +
+            "                                flight a \n" +
+            "                        INNER JOIN  \n" +
+            "                                airship b \n" +
+            "                        ON \n" +
+            "                                a.airship = b.id \n" +
+            "                        INNER JOIN \n" +
+            "                               route c \n" +
+            "                        ON \n" +
+            "                                a.route = c.id";
 
     @Override
     public void create(final Connection connection, Flight flight) {
@@ -86,6 +79,7 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(2, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(3, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(4, flight.getAirship().getId().toString());
+            statement.setString(5, flight.getRoute().getId().toString());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,14 +95,14 @@ public class FlightDAO implements DAO<Flight> {
                 return new Flight(UUID.fromString(resultSet.getString("flight_id")),
                         DateConverter.convert(resultSet.getString("date_departure")),
                         DateConverter.convert(resultSet.getString("date_arrival")),
-                        new Airship(UUID.fromString(resultSet.getString("id")),
+                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                 resultSet.getString("model"),
                                 resultSet.getInt("economy_category"),
                                 resultSet.getInt("business_category"),
                                 resultSet.getInt("premium_category")),
                         new Route(UUID.fromString(resultSet.getString("route_id")),
-                                resultSet.getString("route_start"),
-                                resultSet.getString("route_end")));
+                                resultSet.getString("start_point"),
+                                resultSet.getString("end_point")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,7 +116,8 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(1, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(2, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(3, flight.getAirship().getId().toString());
-            statement.setString(4, flight.getId().toString());
+            statement.setString(4, flight.getRoute().getId().toString());
+            statement.setString(5, flight.getId().toString());
             if (statement.executeUpdate() == 0) {
                 create(connection, flight);
             }
@@ -151,14 +146,14 @@ public class FlightDAO implements DAO<Flight> {
                         new Flight(UUID.fromString(resultSet.getString("flight_id")),
                                 DateConverter.convert(resultSet.getString("date_departure")),
                                 DateConverter.convert(resultSet.getString("date_arrival")),
-                                new Airship(UUID.fromString(resultSet.getString("id")),
+                                new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                         resultSet.getString("model"),
                                         resultSet.getInt("economy_category"),
                                         resultSet.getInt("business_category"),
                                         resultSet.getInt("premium_category")),
                                 new Route(UUID.fromString(resultSet.getString("route_id")),
-                                        resultSet.getString("route_start"),
-                                        resultSet.getString("route_end"))));
+                                        resultSet.getString("start_point"),
+                                        resultSet.getString("end_point"))));
             }
             return flightList;
         } catch (SQLException e) {
