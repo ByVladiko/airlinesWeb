@@ -19,7 +19,7 @@ public class DatabaseConnectivityProvider {
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
-    private static final String PATH_TO_CONNECTION_PROPERTIES = "../../../database.properties";
+    private static final String PATH_TO_CONNECTION_PROPERTIES = "database.properties"; // Если Тест, то без "../../../"
 
     private DatabaseConnectivityProvider() {
     }
