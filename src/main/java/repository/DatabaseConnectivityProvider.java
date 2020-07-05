@@ -19,7 +19,7 @@ public class DatabaseConnectivityProvider {
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
-    private static final String PATH_TO_CONNECTION_PROPERTIES = "database.properties"; // Если Тест, то без "../../../"
+    private static final String PATH_TO_CONNECTION_PROPERTIES = "../../../database.properties";
 
     private DatabaseConnectivityProvider() {
     }
@@ -39,7 +39,10 @@ public class DatabaseConnectivityProvider {
 
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
-                path = String.format("jdbc:%s:%s%s", DatabaseConnectivityProvider.dbType, DatabaseConnectivityProvider.pathToDb, DatabaseConnectivityProvider.dbName);
+                path = String.format("jdbc:%s:%s%s",
+                        DatabaseConnectivityProvider.dbType,
+                        DatabaseConnectivityProvider.pathToDb,
+                        DatabaseConnectivityProvider.dbName);
             }
 
         } catch (IOException | SQLException e) {
