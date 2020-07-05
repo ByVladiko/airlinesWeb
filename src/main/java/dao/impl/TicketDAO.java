@@ -135,7 +135,7 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public void update(final Connection connection, Ticket ticket) throws SQLException {
+    public void update(final Connection connection, Ticket ticket) {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_TICKET)) {
             statement.setString(1, ticket.getFlight().getId().toString());
             statement.setInt(2, ticket.getCategory().getIndex());
@@ -143,9 +143,7 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setFloat(4, ticket.getBaggage());
             statement.setFloat(5, ticket.getStatus().getIndex());
             statement.setString(6, ticket.getId().toString());
-            if (statement.executeUpdate() == 0) {
-                create(connection, ticket);
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

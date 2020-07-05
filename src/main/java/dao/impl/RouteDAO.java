@@ -54,9 +54,6 @@ public class RouteDAO implements DAO<Route> {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());
-            if (statement.executeUpdate() == 0) {
-                create(connection, route);
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

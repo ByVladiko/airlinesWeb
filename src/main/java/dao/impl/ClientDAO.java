@@ -135,7 +135,7 @@ public class ClientDAO implements DAO<Client> {
                         resultSet.getString("last_name"),
                         resultSet.getFloat("bill"));
                 if (resultSet.getString("ticket_id") != null) {
-                    ArrayList<Ticket> listTickets = new ArrayList<>();
+                    List<Ticket> listTickets = new ArrayList<>();
                     listTickets.add(createTicket(resultSet));
                     while (resultSet.next()) {
                         listTickets.add(createTicket(resultSet));
@@ -158,9 +158,7 @@ public class ClientDAO implements DAO<Client> {
             statement.setString(3, client.getLastName());
             statement.setFloat(4, client.getBill());
             statement.setString(5, client.getId().toString());
-            if (statement.executeUpdate() == 0) {
-                create(connection, client);
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,7 +212,7 @@ public class ClientDAO implements DAO<Client> {
                 new Flight(UUID.fromString(resultSet.getString("flight_id")),
                         DateConverter.convert(resultSet.getString("date_of_departure")),
                         DateConverter.convert(resultSet.getString("date_of_arrival")),
-                        new Airship(UUID.fromString(resultSet.getString("airship_id,")),
+                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                 resultSet.getString("model"),
                                 resultSet.getInt("economy_category"),
                                 resultSet.getInt("business_category"),

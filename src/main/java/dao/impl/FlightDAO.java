@@ -118,9 +118,7 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(3, flight.getAirship().getId().toString());
             statement.setString(4, flight.getRoute().getId().toString());
             statement.setString(5, flight.getId().toString());
-            if (statement.executeUpdate() == 0) {
-                create(connection, flight);
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

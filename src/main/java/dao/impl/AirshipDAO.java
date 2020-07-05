@@ -41,7 +41,7 @@ public class AirshipDAO implements DAO<Airship> {
     }
 
     @Override
-    public Airship getById(Connection connection, String id) {
+    public Airship getById(final Connection connection, String id) {
         try (PreparedStatement statement = connection.prepareStatement(SELECT_AIRSHIP_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -66,9 +66,7 @@ public class AirshipDAO implements DAO<Airship> {
             statement.setInt(3, airship.getBusinessCategory());
             statement.setInt(4, airship.getPremiumCategory());
             statement.setString(5, airship.getId().toString());
-            if (statement.executeUpdate() == 0) {
-                create(connection, airship);
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
