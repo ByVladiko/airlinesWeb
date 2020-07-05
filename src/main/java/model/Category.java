@@ -2,7 +2,7 @@ package model;
 
 public enum Category {
 
-    ECONOMY, PREMIUM, FIRST, BUSINESS;
+    ECONOMY, PREMIUM, BUSINESS;
 
     public static Category byOrdinal(int ord) {
         for (Category category : Category.values()) {
