@@ -7,15 +7,16 @@ import java.util.Date;
 
 public class DateConverter {
 
-    private DateConverter(){}
+    private final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private DateConverter() {
+    }
 
     public static String convert(Date date) {
-        DateFormat sqlFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-        return sqlFormat.format(date);
+        return dateFormat.format(date);
     }
 
     public static Date convert(String date) {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         try {
             return dateFormat.parse(date);
         } catch (ParseException e) {
