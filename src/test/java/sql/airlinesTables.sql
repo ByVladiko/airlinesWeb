@@ -2,7 +2,6 @@
 -- Encoding: UTF-8
 --
 PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
 
 -- Table: airship
 CREATE TABLE airship (
@@ -91,6 +90,4 @@ CREATE TABLE ticket (
                                                  ON UPDATE CASCADE
 );
 
-
-COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

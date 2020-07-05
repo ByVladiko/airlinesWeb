@@ -2,7 +2,6 @@
 -- Encoding: UTF-8
 --
 PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
 
 -- Table: airship
 CREATE TABLE airship (
@@ -131,5 +130,4 @@ INSERT INTO ticket (id, flight, category, cost, baggage, status, client) VALUES 
 INSERT INTO ticket (id, flight, category, cost, baggage, status, client) VALUES ('a9844512-0366-4a25-bd95-a09382e7cfe8', 'dc0d0496-b4ae-4432-9e8a-09867329c820', 2, 15000.0, 11.0, 1, '66cb6636-737c-11ea-bc55-0242ac130003');
 INSERT INTO ticket (id, flight, category, cost, baggage, status, client) VALUES ('06c96a92-01f6-45b8-a4cc-7d663de30d76', 'dc0d0496-b4ae-4432-9e8a-09867329c820', 1, 5000.0, 0.0, 4, NULL);
 
-COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
