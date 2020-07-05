@@ -98,7 +98,7 @@ public class Flight implements Serializable {
             Flight flight = (Flight) obj;
             return id.equals(flight.id)
                     && dateOfDeparture.equals(flight.dateOfDeparture)
-                    && dateOfArrival.equals(flight.dateOfDeparture)
+                    && dateOfArrival.equals(flight.dateOfArrival)
                     && airship.equals(flight.airship)
                     && route.equals(flight.route);
         }
