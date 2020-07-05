@@ -93,8 +93,8 @@ public class FlightDAO implements DAO<Flight> {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                        DateConverter.convert(resultSet.getString("date_departure")),
-                        DateConverter.convert(resultSet.getString("date_arrival")),
+                        DateConverter.convert(resultSet.getString("date_of_departure")),
+                        DateConverter.convert(resultSet.getString("date_of_arrival")),
                         new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                 resultSet.getString("model"),
                                 resultSet.getInt("economy_category"),
@@ -144,8 +144,8 @@ public class FlightDAO implements DAO<Flight> {
             while (resultSet.next()) {
                 flightList.add(
                         new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                DateConverter.convert(resultSet.getString("date_departure")),
-                                DateConverter.convert(resultSet.getString("date_arrival")),
+                                DateConverter.convert(resultSet.getString("date_of_departure")),
+                                DateConverter.convert(resultSet.getString("date_of_arrival")),
                                 new Airship(UUID.fromString(resultSet.getString("airship_id")),
                                         resultSet.getString("model"),
                                         resultSet.getInt("economy_category"),

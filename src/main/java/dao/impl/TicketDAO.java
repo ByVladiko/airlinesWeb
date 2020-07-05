@@ -15,7 +15,7 @@ public class TicketDAO implements DAO<Ticket> {
     public TicketDAO() {
     }
 
-    private static final String CREATE_TICKET = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?)";
+    private static final String CREATE_TICKET = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_TICKET_BY_ID = "SELECT \n" +
             "                    a.id,\n" +
             "                    a.category,\n" +
@@ -26,7 +26,7 @@ public class TicketDAO implements DAO<Ticket> {
             "                    b.date_of_departure,\n" +
             "                    b.date_of_arrival,\n" +
             "                    c.id as airship_id,\n" +
-            "                    c.model as model,\n" +
+            "                    c.model,\n" +
             "                    c.business_category,\n" +
             "                    c.economy_category,\n" +
             "                    c.premium_category,\n" +
@@ -96,7 +96,9 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setString(2, ticket.getFlight().getId().toString());
             statement.setInt(3, ticket.getCategory().getIndex());
             statement.setFloat(4, ticket.getCost());
-            statement.setString(5, null);
+            statement.setFloat(5, ticket.getBaggage());
+            statement.setInt(6, ticket.getStatus().getIndex());
+            statement.setString(7, null);
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,7 +116,7 @@ public class TicketDAO implements DAO<Ticket> {
                                 DateConverter.convert(resultSet.getString("date_of_departure")),
                                 DateConverter.convert(resultSet.getString("date_of_arrival")),
                                 new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                        resultSet.getString("airship_model"),
+                                        resultSet.getString("model"),
                                         resultSet.getInt("economy_category"),
                                         resultSet.getInt("business_category"),
                                         resultSet.getInt("premium_category")),

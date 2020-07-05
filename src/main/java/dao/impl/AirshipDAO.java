@@ -65,6 +65,7 @@ public class AirshipDAO implements DAO<Airship> {
             statement.setInt(2, airship.getEconomyCategory());
             statement.setInt(3, airship.getBusinessCategory());
             statement.setInt(4, airship.getPremiumCategory());
+            statement.setString(5, airship.getId().toString());
             if (statement.executeUpdate() == 0) {
                 create(connection, airship);
             }

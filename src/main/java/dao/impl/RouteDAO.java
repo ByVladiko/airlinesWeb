@@ -33,7 +33,7 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public Route getById(Connection connection, String id) {
+    public Route getById(final Connection connection, String id) {
         try (PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();

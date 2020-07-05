@@ -15,8 +15,6 @@ public class ClientDAO implements DAO<Client> {
     public ClientDAO() {
     }
 
-    private static Connection connection;
-
     private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?, ?)";
     private static final String GET_CLIENT_BY_ID = "SELECT  \n" +
             "                                *  \n" +
