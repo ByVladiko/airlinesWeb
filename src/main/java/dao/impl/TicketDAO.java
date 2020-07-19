@@ -1,19 +1,23 @@
 package dao.impl;
 
 import dao.api.DAO;
-import model.*;
-import util.DateConverter;
+import model.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+
+import static util.EntityFactoryDAO.createTicket;
 
 public class TicketDAO implements DAO<Ticket> {
 
     public TicketDAO() {
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(RouteDAO.class);
 
     private static final String CREATE_TICKET = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_TICKET_BY_ID = "SELECT \n" +
@@ -99,39 +103,31 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setFloat(5, ticket.getBaggage());
             statement.setInt(6, ticket.getStatus().getIndex());
             statement.setString(7, null);
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("Record has not been inserted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     @Override
-    public Ticket getById(final Connection connection, String id) {
+    public Ticket getById(final Connection connection, String id) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(GET_TICKET_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return new Ticket(UUID.fromString(resultSet.getString("id")),
-                        new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                DateConverter.convert(resultSet.getString("date_of_departure")),
-                                DateConverter.convert(resultSet.getString("date_of_arrival")),
-                                new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                        resultSet.getString("model"),
-                                        resultSet.getInt("economy_category"),
-                                        resultSet.getInt("business_category"),
-                                        resultSet.getInt("premium_category")),
-                                new Route(UUID.fromString(resultSet.getString("route_id")),
-                                        resultSet.getString("start_point"),
-                                        resultSet.getString("end_point"))),
-                        Category.byOrdinal(resultSet.getInt("category")),
-                        resultSet.getFloat("cost"),
-                        resultSet.getFloat("baggage"),
-                        Status.byOrdinal(resultSet.getInt("status")));
+                return createTicket(resultSet);
+            } else {
+                throw new SQLException("Can't get record by this id");
             }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        return null;
+        throw new SQLException("Unsuccessful operation");
     }
 
     @Override
@@ -145,6 +141,7 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setString(6, ticket.getId().toString());
             statement.executeUpdate();
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -153,8 +150,14 @@ public class TicketDAO implements DAO<Ticket> {
     public void delete(final Connection connection, Ticket ticket) {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_TICKET_BY_ID)) {
             statement.setString(1, ticket.getId().toString());
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("No one record has been deleted");
+            } else if (result > 1) {
+                throw new SQLException("More than one record has been deleted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -165,26 +168,11 @@ public class TicketDAO implements DAO<Ticket> {
             List<Ticket> ticketList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_TICKETS);
             while (resultSet.next()) {
-                ticketList.add(
-                        new Ticket(UUID.fromString(resultSet.getString("id")),
-                                new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                        DateConverter.convert(resultSet.getString("date_of_departure")),
-                                        DateConverter.convert(resultSet.getString("date_of_arrival")),
-                                        new Airship(UUID.fromString(resultSet.getString("id")),
-                                                resultSet.getString("airship_model"),
-                                                resultSet.getInt("economy_category"),
-                                                resultSet.getInt("business_category"),
-                                                resultSet.getInt("premium_category")),
-                                        new Route(UUID.fromString(resultSet.getString("route_id")),
-                                                resultSet.getString("start_point"),
-                                                resultSet.getString("end_point"))),
-                                Category.byOrdinal(resultSet.getInt("category")),
-                                resultSet.getFloat("cost"),
-                                resultSet.getFloat("baggage"),
-                                Status.byOrdinal(resultSet.getInt("status"))));
+                ticketList.add(createTicket(resultSet));
             }
             return ticketList;
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
             return Collections.emptyList();
         }

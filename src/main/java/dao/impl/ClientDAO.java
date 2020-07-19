@@ -1,19 +1,23 @@
 package dao.impl;
 
 import dao.api.DAO;
-import model.*;
-import util.DateConverter;
+import model.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+
+import static util.EntityFactoryDAO.createClient;
 
 public class ClientDAO implements DAO<Client> {
 
     public ClientDAO() {
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(ClientDAO.class);
 
     private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?, ?)";
     private static final String GET_CLIENT_BY_ID = "SELECT  \n" +
@@ -117,37 +121,31 @@ public class ClientDAO implements DAO<Client> {
             statement.setString(3, client.getMiddleName());
             statement.setString(4, client.getLastName());
             statement.setFloat(5, client.getBill());
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("Record has not been inserted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     @Override
-    public Client getById(Connection connection, String id) {
+    public Client getById(final Connection connection, String id) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Client client = new Client(UUID.fromString(resultSet.getString("id")),
-                        resultSet.getString("first_name"),
-                        resultSet.getString("middle_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getFloat("bill"));
-                if (resultSet.getString("ticket_id") != null) {
-                    List<Ticket> listTickets = new ArrayList<>();
-                    listTickets.add(createTicket(resultSet));
-                    while (resultSet.next()) {
-                        listTickets.add(createTicket(resultSet));
-                    }
-                    client.setTickets(listTickets);
-                }
-                return client;
+                return createClient(resultSet);
+            } else {
+                throw new SQLException("Can't get record by this id");
             }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        return null;
+        throw new SQLException("Unsuccessful operation");
     }
 
     @Override
@@ -158,8 +156,14 @@ public class ClientDAO implements DAO<Client> {
             statement.setString(3, client.getLastName());
             statement.setFloat(4, client.getBill());
             statement.setString(5, client.getId().toString());
-            statement.executeUpdate();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("No one record have been updated");
+            } else if (result > 1) {
+                throw new SQLException("More than one record has been updated");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -168,8 +172,14 @@ public class ClientDAO implements DAO<Client> {
     public void delete(final Connection connection, Client client) {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_CLIENT_BY_ID)) {
             statement.setString(1, client.getId().toString());
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("No one record has been deleted");
+            } else if (result > 1) {
+                throw new SQLException("More than one record has been deleted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -180,50 +190,15 @@ public class ClientDAO implements DAO<Client> {
             List<Client> clientList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_CLIENTS);
             while (resultSet.next()) {
-                Client client = new Client(UUID.fromString(resultSet.getString("id")),
-                        resultSet.getString("first_name"),
-                        resultSet.getString("middle_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getFloat("bill"));
-                if (resultSet.getString("ticket_id") != null) {
-                    ArrayList<Ticket> listTickets = new ArrayList<>();
-                    listTickets.add(createTicket(resultSet));
-                    while (resultSet.next()) {
-                        if (client.getId().toString().equals(resultSet.getString("id"))) {
-                            listTickets.add(createTicket(resultSet));
-                        } else {
-                            resultSet.previous();
-                            break;
-                        }
-                    }
-                    client.setTickets(listTickets);
-                }
+                Client client = createClient(resultSet);
                 clientList.add(client);
             }
             return clientList;
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
             return Collections.emptyList();
         }
-    }
-
-    private Ticket createTicket(ResultSet resultSet) throws SQLException {
-        return new Ticket(UUID.fromString(resultSet.getString("ticket_id")),
-                new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                        DateConverter.convert(resultSet.getString("date_of_departure")),
-                        DateConverter.convert(resultSet.getString("date_of_arrival")),
-                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                resultSet.getString("model"),
-                                resultSet.getInt("economy_category"),
-                                resultSet.getInt("business_category"),
-                                resultSet.getInt("premium_category")),
-                        new Route(UUID.fromString(resultSet.getString("route_id")),
-                                resultSet.getString("start_point"),
-                                resultSet.getString("end_point"))),
-                Category.byOrdinal(resultSet.getInt("category")),
-                resultSet.getFloat("cost"),
-                resultSet.getFloat("baggage"),
-                Status.byOrdinal(resultSet.getInt("status")));
     }
 
 }

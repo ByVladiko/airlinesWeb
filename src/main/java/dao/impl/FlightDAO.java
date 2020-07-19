@@ -1,21 +1,24 @@
 package dao.impl;
 
 import dao.api.DAO;
-import model.Airship;
 import model.Flight;
-import model.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.DateConverter;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+
+import static util.EntityFactoryDAO.createFlight;
 
 public class FlightDAO implements DAO<Flight> {
 
     public FlightDAO() {
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(FlightDAO.class);
 
     private static final String CREATE_FLIGHT = "INSERT INTO flight VALUES(?, ?, ?, ?, ?)";
     private static final String GET_FLIGHT_BY_ID = "SELECT \n" +
@@ -80,34 +83,31 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(3, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(4, flight.getAirship().getId().toString());
             statement.setString(5, flight.getRoute().getId().toString());
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("Record has not been inserted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     @Override
-    public Flight getById(Connection connection, String id) {
+    public Flight getById(Connection connection, String id) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                        DateConverter.convert(resultSet.getString("date_of_departure")),
-                        DateConverter.convert(resultSet.getString("date_of_arrival")),
-                        new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                resultSet.getString("model"),
-                                resultSet.getInt("economy_category"),
-                                resultSet.getInt("business_category"),
-                                resultSet.getInt("premium_category")),
-                        new Route(UUID.fromString(resultSet.getString("route_id")),
-                                resultSet.getString("start_point"),
-                                resultSet.getString("end_point")));
+                return createFlight(resultSet);
+            } else {
+                throw new SQLException("Can't get record by this id");
             }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        return null;
+        throw new SQLException("Unsuccessful operation");
     }
 
     @Override
@@ -118,8 +118,14 @@ public class FlightDAO implements DAO<Flight> {
             statement.setString(3, flight.getAirship().getId().toString());
             statement.setString(4, flight.getRoute().getId().toString());
             statement.setString(5, flight.getId().toString());
-            statement.executeUpdate();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("No one record have been updated");
+            } else if (result > 1) {
+                throw new SQLException("More than one record has been updated");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -128,8 +134,14 @@ public class FlightDAO implements DAO<Flight> {
     public void delete(final Connection connection, Flight flight) {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_FLIGHT)) {
             statement.setString(1, flight.getId().toString());
-            statement.execute();
+            int result = statement.executeUpdate();
+            if (result == 0) {
+                throw new SQLException("No one record has been deleted");
+            } else if (result > 1) {
+                throw new SQLException("More than one record has been deleted");
+            }
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -140,21 +152,11 @@ public class FlightDAO implements DAO<Flight> {
             List<Flight> flightList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_FLIGHTS);
             while (resultSet.next()) {
-                flightList.add(
-                        new Flight(UUID.fromString(resultSet.getString("flight_id")),
-                                DateConverter.convert(resultSet.getString("date_of_departure")),
-                                DateConverter.convert(resultSet.getString("date_of_arrival")),
-                                new Airship(UUID.fromString(resultSet.getString("airship_id")),
-                                        resultSet.getString("model"),
-                                        resultSet.getInt("economy_category"),
-                                        resultSet.getInt("business_category"),
-                                        resultSet.getInt("premium_category")),
-                                new Route(UUID.fromString(resultSet.getString("route_id")),
-                                        resultSet.getString("start_point"),
-                                        resultSet.getString("end_point"))));
+                flightList.add(createFlight(resultSet));
             }
             return flightList;
         } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
             return Collections.emptyList();
         }
