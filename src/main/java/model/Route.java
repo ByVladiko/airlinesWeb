@@ -1,11 +1,8 @@
 package model;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-public class Route implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Route {
 
     private UUID id;
     private String startPoint;
@@ -16,9 +13,6 @@ public class Route implements Serializable {
         this.id = UUID.randomUUID();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
-    }
-
-    public Route() {
     }
 
     public Route(UUID id, String startPoint, String endPoint) {

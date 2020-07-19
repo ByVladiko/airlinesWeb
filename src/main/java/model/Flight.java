@@ -1,12 +1,9 @@
 package model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class Flight implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Flight {
 
     private UUID id;
     private Date dateOfDeparture;
@@ -28,9 +25,6 @@ public class Flight implements Serializable {
         this.dateOfArrival = dateOfArrival;
         this.airship = airship;
         this.route = route;
-    }
-
-    public Flight() {
     }
 
     public UUID getId() {

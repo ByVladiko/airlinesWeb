@@ -1,13 +1,10 @@
 package model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Client implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Client {
 
     private UUID id;
     private String firstName;
@@ -59,13 +56,6 @@ public class Client implements Serializable {
         this.lastName = lastName;
         this.bill = 0;
         this.tickets = new ArrayList<>();
-    }
-
-    public Client() {
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public UUID getId() {

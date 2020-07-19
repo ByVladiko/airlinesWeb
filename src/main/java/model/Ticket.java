@@ -1,11 +1,8 @@
 package model;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-public class Ticket implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Ticket {
 
     private UUID id;
     private Flight flight;
@@ -30,13 +27,6 @@ public class Ticket implements Serializable {
         this.cost = cost;
         this.baggage = baggage;
         this.status = status;
-    }
-
-    public Ticket() {
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public UUID getId() {

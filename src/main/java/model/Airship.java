@@ -1,11 +1,8 @@
 package model;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-public class Airship implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Airship {
 
     private UUID id;
     private String model;
@@ -27,9 +24,6 @@ public class Airship implements Serializable {
         this.economyCategory = economyCategory;
         this.businessCategory = businessCategory;
         this.premiumCategory = premiumCategory;
-    }
-
-    public Airship() {
     }
 
     public UUID getId() {
