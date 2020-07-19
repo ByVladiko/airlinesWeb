@@ -1,9 +1,10 @@
 package repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.JDBC;
 import org.sqlite.SQLiteConfig;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,7 +20,7 @@ public class DatabaseConnectivityProvider {
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
-    private static final String PATH_TO_CONNECTION_PROPERTIES = "../../../database.properties";
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseConnectivityProvider.class);
 
     private DatabaseConnectivityProvider() {
     }
@@ -27,7 +28,7 @@ public class DatabaseConnectivityProvider {
     public static void registryDriver() {
         try {
             Properties property = new Properties();
-            property.load(new FileInputStream(PATH_TO_CONNECTION_PROPERTIES));
+            property.load(DatabaseConnectivityProvider.class.getClassLoader().getResource("database.properties").openStream());
 
             dbType = property.getProperty("DB_TYPE");
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
@@ -46,6 +47,7 @@ public class DatabaseConnectivityProvider {
             }
 
         } catch (IOException | SQLException e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
             System.exit(1);
         }

@@ -20,15 +20,15 @@ public class MainTestOperations {
 
     @BeforeClass
     public static void registryDriver() throws SQLException {
-        DatabaseConnect.registryDriver();
-        connection = DatabaseConnect.getConnection();
+        DatabaseConnectTest.registryDriver();
+        connection = DatabaseConnectTest.getConnection();
         System.out.println("Successful database connection");
     }
 
     @AfterClass
     public static void finish() throws SQLException {
         connection.rollback();
-        System.out.println("Test completed");
+        System.out.println("Test finished");
     }
 
     protected Route createRoute() {
