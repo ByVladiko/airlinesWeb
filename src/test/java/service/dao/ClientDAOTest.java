@@ -1,6 +1,6 @@
 package service.dao;
 
-import model.Route;
+import model.Client;
 import org.junit.Assert;
 import org.junit.Test;
 import service.MainTestOperations;
@@ -12,15 +12,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestRouteDAO extends MainTestOperations {
+public class ClientDAOTest extends MainTestOperations {
 
     @Test
     public void create() throws SQLException {
         connection.setAutoCommit(false);
 
-        Route expected = createRoute();
+        Client expected = createClient();
 
-        Route actual = routeDAO.getById(connection, expected.getId().toString());
+        Client actual = clientDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -30,9 +30,9 @@ public class TestRouteDAO extends MainTestOperations {
     public void getById() throws SQLException {
         connection.setAutoCommit(false);
 
-        Route expected = createRoute();
+        Client expected = createClient();
 
-        Route actual = routeDAO.getById(connection, expected.getId().toString());
+        Client actual = clientDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -42,13 +42,16 @@ public class TestRouteDAO extends MainTestOperations {
     public void update() throws SQLException {
         connection.setAutoCommit(false);
 
-        Route expected = createRoute();
+        Client expected = createClient();
 
-        expected.setStartPoint(GeneratorSQL.getRandomString());
-        expected.setEndPoint(GeneratorSQL.getRandomString());
-        routeDAO.update(connection, expected);
+        expected.setFirstName(GeneratorSQL.getRandomString());
+        expected.setMiddleName(GeneratorSQL.getRandomString());
+        expected.setLastName(GeneratorSQL.getRandomString());
+        expected.setBill(GeneratorSQL.getRandomFloat(1000, 50000));
 
-        Route actual = routeDAO.getById(connection, expected.getId().toString());
+        clientDAO.update(connection, expected);
+
+        Client actual = clientDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -58,12 +61,13 @@ public class TestRouteDAO extends MainTestOperations {
     public void delete() throws SQLException {
         connection.setAutoCommit(false);
 
-        Route route = createRoute();
-        routeDAO.delete(connection, route);
+        Client client = createClient();
+
+        clientDAO.delete(connection, client);
 
         try (PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM route WHERE id = ?")) {
-            statement.setString(1, route.getId().toString());
+                     connection.prepareStatement("SELECT * FROM client WHERE id = ?")) {
+            statement.setString(1, client.getId().toString());
             ResultSet resultSet = statement.executeQuery();
 
             boolean result = resultSet.next();
@@ -77,13 +81,14 @@ public class TestRouteDAO extends MainTestOperations {
     public void getAll() throws SQLException {
         connection.setAutoCommit(false);
 
-        List<Route> expected = new ArrayList<>(10);
+        List<Client> expected = new ArrayList<>(10);
+
         for (int i = 0; i < expected.size(); i++) {
-            Route route = createRoute();
-            expected.add(route);
+            Client client = createClient();
+            expected.add(client);
         }
 
-        List<Route> actual = routeDAO.getAll(connection);
+        List<Client> actual = clientDAO.getAll(connection);
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
 
         connection.rollback();

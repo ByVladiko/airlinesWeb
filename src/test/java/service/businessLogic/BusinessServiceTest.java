@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestBusinessService extends MainTestOperations {
+public class BusinessServiceTest extends MainTestOperations {
 
     private final BusinessService businessService = new BusinessService();
 

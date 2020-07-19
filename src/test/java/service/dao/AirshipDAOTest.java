@@ -1,9 +1,6 @@
 package service.dao;
 
-import model.Category;
-import model.Flight;
-import model.Status;
-import model.Ticket;
+import model.Airship;
 import org.junit.Assert;
 import org.junit.Test;
 import service.MainTestOperations;
@@ -15,15 +12,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestTicketDAO extends MainTestOperations {
+public class AirshipDAOTest extends MainTestOperations {
 
     @Test
     public void create() throws SQLException {
         connection.setAutoCommit(false);
 
-        Ticket expected = createTicket();
+        Airship expected = createAirship();
 
-        Ticket actual = ticketDAO.getById(connection, expected.getId().toString());
+        Airship actual = airshipDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -33,9 +30,9 @@ public class TestTicketDAO extends MainTestOperations {
     public void getById() throws SQLException {
         connection.setAutoCommit(false);
 
-        Ticket expected = createTicket();
+        Airship expected = createAirship();
 
-        Ticket actual = ticketDAO.getById(connection, expected.getId().toString());
+        Airship actual = airshipDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -45,15 +42,15 @@ public class TestTicketDAO extends MainTestOperations {
     public void update() throws SQLException {
         connection.setAutoCommit(false);
 
-        Ticket expected = createTicket();
+        Airship expected = createAirship();
 
-        expected.setStatus(Status.byOrdinal(GeneratorSQL.getRandomInt(1, 4)));
-        expected.setBaggage(GeneratorSQL.getRandomFloat(1, 50));
-        expected.setCategory(Category.byOrdinal(GeneratorSQL.getRandomInt(1, 4)));
-        expected.setCost(GeneratorSQL.getRandomFloat(1000, 30000));
-        ticketDAO.update(connection, expected);
+        expected.setModel(GeneratorSQL.getRandomString());
+        expected.setBusinessCategory(GeneratorSQL.getRandomInt(5, 50));
+        expected.setEconomyCategory(GeneratorSQL.getRandomInt(5, 50));
+        expected.setPremiumCategory(GeneratorSQL.getRandomInt(5, 50));
+        airshipDAO.update(connection, expected);
 
-        Ticket actual = ticketDAO.getById(connection, expected.getId().toString());
+        Airship actual = airshipDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -63,13 +60,12 @@ public class TestTicketDAO extends MainTestOperations {
     public void delete() throws SQLException {
         connection.setAutoCommit(false);
 
-        Ticket ticket = createTicket();
-
-        ticketDAO.delete(connection, ticket);
+        Airship airship = createAirship();
+        airshipDAO.delete(connection, airship);
 
         try (PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM ticket WHERE id = ?")) {
-            statement.setString(1, ticket.getId().toString());
+                     connection.prepareStatement("SELECT * FROM airship WHERE id = ?")) {
+            statement.setString(1, airship.getId().toString());
             ResultSet resultSet = statement.executeQuery();
 
             boolean result = resultSet.next();
@@ -83,14 +79,15 @@ public class TestTicketDAO extends MainTestOperations {
     public void getAll() throws SQLException {
         connection.setAutoCommit(false);
 
-        List<Ticket> expected = new ArrayList<>(10);
+        List<Airship> expected = new ArrayList<>(10);
 
         for (int i = 0; i < expected.size(); i++) {
-            Ticket ticket = createTicket();
-            expected.add(ticket);
+            Airship airship = GeneratorSQL.getRandomAirship();
+            expected.add(airship);
+            airshipDAO.create(connection, airship);
         }
 
-        List<Flight> actual = flightDAO.getAll(connection);
+        List<Airship> actual = airshipDAO.getAll(connection); // test getAll
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
 
         connection.rollback();

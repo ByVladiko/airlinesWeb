@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseConnect {
+public class DatabaseConnectTest {
 
     private static String path;
     private static String dbType;
@@ -18,15 +18,13 @@ public class DatabaseConnect {
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
-    private static final String PATH_TO_CONNECTION_PROPERTIES = "database.properties";
-
-    private DatabaseConnect() {
+    private DatabaseConnectTest() {
     }
 
     public static void registryDriver() {
         try {
             Properties property = new Properties();
-            property.load(DatabaseConnect.class.getClassLoader().getResource("database.properties").openStream());
+            property.load(DatabaseConnectTest.class.getClassLoader().getResource("database.properties").openStream());
 
             dbType = property.getProperty("DB_TYPE");
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
@@ -39,9 +37,9 @@ public class DatabaseConnect {
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
                 path = String.format("jdbc:%s:%s%s",
-                        DatabaseConnect.dbType,
-                        DatabaseConnect.pathToDb,
-                        DatabaseConnect.dbName);
+                        DatabaseConnectTest.dbType,
+                        DatabaseConnectTest.pathToDb,
+                        DatabaseConnectTest.dbName);
             }
 
         } catch (IOException | SQLException e) {

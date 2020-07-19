@@ -1,6 +1,6 @@
 package service.dao;
 
-import model.Flight;
+import model.Route;
 import org.junit.Assert;
 import org.junit.Test;
 import service.MainTestOperations;
@@ -12,15 +12,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestFlightDAO extends MainTestOperations {
+public class RouteDAOTest extends MainTestOperations {
 
     @Test
     public void create() throws SQLException {
         connection.setAutoCommit(false);
 
-        Flight expected = createFlight();
+        Route expected = createRoute();
 
-        Flight actual = flightDAO.getById(connection, expected.getId().toString());
+        Route actual = routeDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -30,9 +30,9 @@ public class TestFlightDAO extends MainTestOperations {
     public void getById() throws SQLException {
         connection.setAutoCommit(false);
 
-        Flight expected = createFlight();
+        Route expected = createRoute();
 
-        Flight actual = flightDAO.getById(connection, expected.getId().toString());
+        Route actual = routeDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -42,13 +42,13 @@ public class TestFlightDAO extends MainTestOperations {
     public void update() throws SQLException {
         connection.setAutoCommit(false);
 
-        Flight expected = createFlight();
+        Route expected = createRoute();
 
-        expected.setDateOfArrival(GeneratorSQL.getRandomDate());
-        expected.setDateOfDeparture(GeneratorSQL.getRandomDate());
-        flightDAO.update(connection, expected);
+        expected.setStartPoint(GeneratorSQL.getRandomString());
+        expected.setEndPoint(GeneratorSQL.getRandomString());
+        routeDAO.update(connection, expected);
 
-        Flight actual = flightDAO.getById(connection, expected.getId().toString());
+        Route actual = routeDAO.getById(connection, expected.getId().toString());
         Assert.assertEquals(expected, actual);
 
         connection.rollback();
@@ -58,12 +58,12 @@ public class TestFlightDAO extends MainTestOperations {
     public void delete() throws SQLException {
         connection.setAutoCommit(false);
 
-        Flight flight = createFlight();
+        Route route = createRoute();
+        routeDAO.delete(connection, route);
 
-        flightDAO.delete(connection, flight);
         try (PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM flight WHERE id = ?")) {
-            statement.setString(1, flight.getId().toString());
+                     connection.prepareStatement("SELECT * FROM route WHERE id = ?")) {
+            statement.setString(1, route.getId().toString());
             ResultSet resultSet = statement.executeQuery();
 
             boolean result = resultSet.next();
@@ -77,14 +77,13 @@ public class TestFlightDAO extends MainTestOperations {
     public void getAll() throws SQLException {
         connection.setAutoCommit(false);
 
-        List<Flight> expected = new ArrayList<>(10);
-
+        List<Route> expected = new ArrayList<>(10);
         for (int i = 0; i < expected.size(); i++) {
-            Flight flight = createFlight();
-            expected.add(flight);
+            Route route = createRoute();
+            expected.add(route);
         }
 
-        List<Flight> actual = flightDAO.getAll(connection);
+        List<Route> actual = routeDAO.getAll(connection);
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
 
         connection.rollback();
