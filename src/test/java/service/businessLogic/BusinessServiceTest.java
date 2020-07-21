@@ -6,14 +6,15 @@ import model.Ticket;
 import org.junit.Assert;
 import org.junit.Test;
 import service.BusinessService;
-import service.MainTestOperations;
+import service.BusinessServiceException;
+import service.SQLTestOperations;
 import util.GeneratorSQL;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BusinessServiceTest extends MainTestOperations {
+public class BusinessServiceTest extends SQLTestOperations {
 
     private final BusinessService businessService = new BusinessService();
 
@@ -43,7 +44,7 @@ public class BusinessServiceTest extends MainTestOperations {
     }
 
     @Test
-    public void addTicketToDB() throws SQLException {
+    public void addTicketToDB() throws SQLException, BusinessServiceException {
         connection.setAutoCommit(false);
 
         Ticket ticket = GeneratorSQL.getRandomTicket();
