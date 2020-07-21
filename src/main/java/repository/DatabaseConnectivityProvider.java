@@ -49,7 +49,7 @@ public class DatabaseConnectivityProvider {
         } catch (IOException | SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-            System.exit(1);
+            throw new RuntimeException("Unsuccessful registry jdbc driver");
         }
     }
 
