@@ -9,7 +9,7 @@ import util.GeneratorSQL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MainTestOperations {
+public class SQLTestOperations {
 
     protected static Connection connection;
     protected final RouteDAO routeDAO = new RouteDAO();
@@ -22,6 +22,7 @@ public class MainTestOperations {
     public static void registryDriver() throws SQLException {
         DatabaseConnectTest.registryDriver();
         connection = DatabaseConnectTest.getConnection();
+        connection.setAutoCommit(false);
         System.out.println("Successful database connection");
     }
 
@@ -31,19 +32,19 @@ public class MainTestOperations {
         System.out.println("Test finished");
     }
 
-    protected Route createRoute() {
+    protected Route createRoute() throws SQLException {
         Route route = GeneratorSQL.getRandomRoute();
         routeDAO.create(connection, route);
         return route;
     }
 
-    protected Airship createAirship() {
+    protected Airship createAirship() throws SQLException {
         Airship airship = GeneratorSQL.getRandomAirship();
         airshipDAO.create(connection, airship);
         return airship;
     }
 
-    protected Flight createFlight() {
+    protected Flight createFlight() throws SQLException {
         Flight expected = GeneratorSQL.getRandomFlight();
         airshipDAO.create(connection, expected.getAirship());
         routeDAO.create(connection, expected.getRoute());
@@ -51,13 +52,13 @@ public class MainTestOperations {
         return expected;
     }
 
-    protected Client createClient() {
+    protected Client createClient() throws SQLException {
         Client client = GeneratorSQL.getRandomClient();
         clientDAO.create(connection, client);
         return client;
     }
 
-    protected Ticket createTicket() {
+    protected Ticket createTicket() throws SQLException {
         Ticket ticket = GeneratorSQL.getRandomTicket();
         airshipDAO.create(connection, ticket.getFlight().getAirship());
         routeDAO.create(connection, ticket.getFlight().getRoute());
