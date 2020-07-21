@@ -1,8 +1,10 @@
-2020-07-20 02:23:26 ERROR AirshipDAO:101 - No one record has been deleted
-java.sql.SQLException: No one record has been deleted
-	at dao.impl.AirshipDAO.delete(AirshipDAO.java:96)
-	at MainApp.main(MainApp.java:16)
-2020-07-20 02:23:26 ERROR AirshipDAO:85 - No one record have been updated
-java.sql.SQLException: No one record have been updated
-	at dao.impl.AirshipDAO.update(AirshipDAO.java:80)
-	at MainApp.main(MainApp.java:17)
+[ERROR] 2020-07-22 00:43:50 MainApp:16 
+java.sql.SQLException: Can't get record by this id
+	at dao.impl.AirshipDAO.getById(AirshipDAO.java:65)
+	at MainApp.main(MainApp.java:14)
+[INFO] 2020-07-22 00:43:50 MainApp:17 test
+[ERROR] 2020-07-22 00:43:55 MainApp:16 
+java.sql.SQLException: Can't get record by this id
+	at dao.impl.AirshipDAO.getById(AirshipDAO.java:65)
+	at MainApp.main(MainApp.java:14)
+[INFO] 2020-07-22 00:43:55 MainApp:17 test
