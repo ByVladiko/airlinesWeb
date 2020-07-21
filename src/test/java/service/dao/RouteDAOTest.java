@@ -3,7 +3,7 @@ package service.dao;
 import model.Route;
 import org.junit.Assert;
 import org.junit.Test;
-import service.MainTestOperations;
+import service.SQLTestOperations;
 import util.GeneratorSQL;
 
 import java.sql.PreparedStatement;
@@ -11,12 +11,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class RouteDAOTest extends MainTestOperations {
+public class RouteDAOTest extends SQLTestOperations {
 
     @Test
-    public void create() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreate() throws SQLException {
+        Route expected = createRoute();
+
+        Route actual = routeDAO.getById(connection, expected.getId().toString());
+        Assert.assertEquals(expected, actual);
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testCreatException() throws SQLException {
+        Route test = createRoute();
+
+        Route route = GeneratorSQL.getRandomRoute();
+        route.setId(test.getId());
+
+        Assert.assertThrows(SQLException.class, () -> routeDAO.create(connection, route));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testGetById() throws SQLException {
 
         Route expected = createRoute();
 
@@ -27,20 +49,12 @@ public class RouteDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getById() throws SQLException {
-        connection.setAutoCommit(false);
-
-        Route expected = createRoute();
-
-        Route actual = routeDAO.getById(connection, expected.getId().toString());
-        Assert.assertEquals(expected, actual);
-
-        connection.rollback();
+    public void testGetByIdException() {
+        Assert.assertThrows(SQLException.class, () -> routeDAO.getById(connection, UUID.randomUUID().toString()));
     }
 
     @Test
-    public void update() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testUpdate() throws SQLException {
 
         Route expected = createRoute();
 
@@ -55,8 +69,18 @@ public class RouteDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void delete() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testUpdateException() throws SQLException {
+        Route test = createRoute();
+
+        test.setId(UUID.randomUUID());
+
+        Assert.assertThrows(SQLException.class, () -> routeDAO.update(connection, test));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testDelete() throws SQLException {
 
         Route route = createRoute();
         routeDAO.delete(connection, route);
@@ -74,11 +98,16 @@ public class RouteDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getAll() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testDeleteException() {
+        Assert.assertThrows(SQLException.class, () -> routeDAO.delete(connection, GeneratorSQL.getRandomRoute()));
+    }
 
-        List<Route> expected = new ArrayList<>(10);
-        for (int i = 0; i < expected.size(); i++) {
+    @Test
+    public void testGetAll() throws SQLException {
+        int initialCapacity = 10;
+        List<Route> expected = new ArrayList<>(initialCapacity);
+
+        for (int i = 0; i < initialCapacity; i++) {
             Route route = createRoute();
             expected.add(route);
         }

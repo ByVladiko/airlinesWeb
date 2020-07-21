@@ -1,12 +1,11 @@
 package service.dao;
 
 import model.Category;
-import model.Flight;
 import model.Status;
 import model.Ticket;
 import org.junit.Assert;
 import org.junit.Test;
-import service.MainTestOperations;
+import service.SQLTestOperations;
 import util.GeneratorSQL;
 
 import java.sql.PreparedStatement;
@@ -14,12 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class TicketDAOTest extends MainTestOperations {
+public class TicketDAOTest extends SQLTestOperations {
 
     @Test
-    public void create() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreate() throws SQLException {
 
         Ticket expected = createTicket();
 
@@ -30,8 +29,19 @@ public class TicketDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getById() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreateException() throws SQLException {
+        Ticket test = createTicket();
+
+        Ticket ticket = GeneratorSQL.getRandomTicket();
+        ticket.setId(test.getId());
+
+        Assert.assertThrows(SQLException.class, () -> ticketDAO.create(connection, ticket));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testGetById() throws SQLException {
 
         Ticket expected = createTicket();
 
@@ -42,8 +52,12 @@ public class TicketDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void update() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testGetByIdException() {
+        Assert.assertThrows(SQLException.class, () -> ticketDAO.getById(connection, UUID.randomUUID().toString()));
+    }
+
+    @Test
+    public void testUpdate() throws SQLException {
 
         Ticket expected = createTicket();
 
@@ -60,8 +74,18 @@ public class TicketDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void delete() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testUpdateException() throws SQLException {
+        Ticket test = createTicket();
+
+        test.setId(UUID.randomUUID());
+
+        Assert.assertThrows(SQLException.class, () -> ticketDAO.update(connection, test));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testDelete() throws SQLException {
 
         Ticket ticket = createTicket();
 
@@ -80,17 +104,21 @@ public class TicketDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getAll() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testDeleteException() {
+        Assert.assertThrows(SQLException.class, () -> ticketDAO.delete(connection, GeneratorSQL.getRandomTicket()));
+    }
 
-        List<Ticket> expected = new ArrayList<>(10);
+    @Test
+    public void testGetAll() throws SQLException {
+        int initialCapacity = 10;
+        List<Ticket> expected = new ArrayList<>(initialCapacity);
 
-        for (int i = 0; i < expected.size(); i++) {
+        for (int i = 0; i < initialCapacity; i++) {
             Ticket ticket = createTicket();
             expected.add(ticket);
         }
 
-        List<Flight> actual = flightDAO.getAll(connection);
+        List<Ticket> actual = ticketDAO.getAll(connection);
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
 
         connection.rollback();

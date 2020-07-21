@@ -3,7 +3,7 @@ package service.dao;
 import model.Client;
 import org.junit.Assert;
 import org.junit.Test;
-import service.MainTestOperations;
+import service.SQLTestOperations;
 import util.GeneratorSQL;
 
 import java.sql.PreparedStatement;
@@ -11,12 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class ClientDAOTest extends MainTestOperations {
+public class ClientDAOTest extends SQLTestOperations {
 
     @Test
-    public void create() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreate() throws SQLException {
 
         Client expected = createClient();
 
@@ -27,8 +27,19 @@ public class ClientDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getById() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreateException() throws SQLException {
+        Client test = createClient();
+
+        Client client = GeneratorSQL.getRandomClient();
+        client.setId(test.getId());
+
+        Assert.assertThrows(SQLException.class, () -> clientDAO.create(connection, client));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testGetById() throws SQLException {
 
         Client expected = createClient();
 
@@ -39,8 +50,12 @@ public class ClientDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void update() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testGetByIdException() {
+        Assert.assertThrows(SQLException.class, () -> clientDAO.getById(connection, UUID.randomUUID().toString()));
+    }
+
+    @Test
+    public void testUpdate() throws SQLException {
 
         Client expected = createClient();
 
@@ -58,8 +73,18 @@ public class ClientDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void delete() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testUpdateException() throws SQLException {
+        Client test = createClient();
+
+        test.setId(UUID.randomUUID());
+
+        Assert.assertThrows(SQLException.class, () -> clientDAO.update(connection, test));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testDelete() throws SQLException {
 
         Client client = createClient();
 
@@ -78,12 +103,16 @@ public class ClientDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getAll() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testDeleteException() {
+        Assert.assertThrows(SQLException.class, () -> clientDAO.delete(connection, GeneratorSQL.getRandomClient()));
+    }
 
-        List<Client> expected = new ArrayList<>(10);
+    @Test
+    public void testGetAll() throws SQLException {
+        int initialCapacity = 10;
+        List<Client> expected = new ArrayList<>(initialCapacity);
 
-        for (int i = 0; i < expected.size(); i++) {
+        for (int i = 0; i < initialCapacity; i++) {
             Client client = createClient();
             expected.add(client);
         }

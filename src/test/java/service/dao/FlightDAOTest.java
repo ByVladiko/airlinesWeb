@@ -3,7 +3,7 @@ package service.dao;
 import model.Flight;
 import org.junit.Assert;
 import org.junit.Test;
-import service.MainTestOperations;
+import service.SQLTestOperations;
 import util.GeneratorSQL;
 
 import java.sql.PreparedStatement;
@@ -11,12 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class FlightDAOTest extends MainTestOperations {
+public class FlightDAOTest extends SQLTestOperations {
 
     @Test
-    public void create() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreate() throws SQLException {
 
         Flight expected = createFlight();
 
@@ -27,8 +27,19 @@ public class FlightDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getById() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testCreateException() throws SQLException {
+        Flight test = createFlight();
+
+        Flight flight = GeneratorSQL.getRandomFlight();
+        flight.setId(test.getId());
+
+        Assert.assertThrows(SQLException.class, () -> flightDAO.create(connection, flight));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testGetById() throws SQLException {
 
         Flight expected = createFlight();
 
@@ -39,8 +50,12 @@ public class FlightDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void update() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testGetByIdException() {
+        Assert.assertThrows(SQLException.class, () -> flightDAO.getById(connection, UUID.randomUUID().toString()));
+    }
+
+    @Test
+    public void testUpdate() throws SQLException {
 
         Flight expected = createFlight();
 
@@ -55,8 +70,18 @@ public class FlightDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void delete() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testUpdateException() throws SQLException {
+        Flight test = createFlight();
+
+        test.setId(UUID.randomUUID());
+
+        Assert.assertThrows(SQLException.class, () -> flightDAO.update(connection, test));
+
+        connection.rollback();
+    }
+
+    @Test
+    public void testDelete() throws SQLException {
 
         Flight flight = createFlight();
 
@@ -74,12 +99,16 @@ public class FlightDAOTest extends MainTestOperations {
     }
 
     @Test
-    public void getAll() throws SQLException {
-        connection.setAutoCommit(false);
+    public void testDeleteException() {
+        Assert.assertThrows(SQLException.class, () -> flightDAO.delete(connection, GeneratorSQL.getRandomFlight()));
+    }
 
-        List<Flight> expected = new ArrayList<>(10);
+    @Test
+    public void testGetAll() throws SQLException {
+        int initialCapacity = 10;
+        List<Flight> expected = new ArrayList<>(initialCapacity);
 
-        for (int i = 0; i < expected.size(); i++) {
+        for (int i = 0; i < initialCapacity; i++) {
             Flight flight = createFlight();
             expected.add(flight);
         }
