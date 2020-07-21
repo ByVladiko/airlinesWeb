@@ -32,7 +32,6 @@ public class BusinessService {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             connection.rollback();
-            connection.close();
         }
     }
 
@@ -46,7 +45,6 @@ public class BusinessService {
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
-            connection.close();
         }
     }
 
@@ -63,7 +61,6 @@ public class BusinessService {
             e.printStackTrace();
             logger.error(e.getMessage(), e);
             connection.rollback();
-            connection.close();
         }
     }
 
@@ -77,7 +74,6 @@ public class BusinessService {
             e.printStackTrace();
             logger.error(e.getMessage(), e);
             connection.rollback();
-            connection.close();
         }
     }
 
@@ -97,7 +93,6 @@ public class BusinessService {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             connection.rollback();
-            connection.close();
         }
     }
 
@@ -114,7 +109,6 @@ public class BusinessService {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             connection.rollback();
-            connection.close();
         }
     }
 
