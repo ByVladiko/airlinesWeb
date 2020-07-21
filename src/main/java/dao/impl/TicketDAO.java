@@ -21,7 +21,7 @@ public class TicketDAO implements DAO<Ticket> {
 
     private static final String CREATE_TICKET = "INSERT INTO ticket VALUES(?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_TICKET_BY_ID = "SELECT \n" +
-            "                    a.id,\n" +
+            "                    a.id as ticket_id,\n" +
             "                    a.category,\n" +
             "                    a.cost,\n" +
             "                    a.baggage,\n" +
@@ -62,7 +62,7 @@ public class TicketDAO implements DAO<Ticket> {
             "WHERE id = ?";
     private static final String DELETE_TICKET_BY_ID = "DELETE FROM ticket WHERE id = ?";
     private static final String SELECT_ALL_TICKETS = "SELECT \n" +
-            "                    a.id,\n" +
+            "                    a.id as ticket_id,\n" +
             "                    a.category,\n" +
             "                    a.cost,\n" +
             "                    a.baggage,\n" +
@@ -71,7 +71,7 @@ public class TicketDAO implements DAO<Ticket> {
             "                    b.date_of_departure,\n" +
             "                    b.date_of_arrival,\n" +
             "                    c.id as airship_id,\n" +
-            "                    c.model as airship_model,\n" +
+            "                    c.model,\n" +
             "                    c.business_category,\n" +
             "                    c.economy_category,\n" +
             "                    c.premium_category,\n" +

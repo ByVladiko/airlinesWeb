@@ -11,7 +11,7 @@ import java.util.UUID;
 public class EntityFactoryDAO {
 
     public static Airship createAirship(ResultSet resultSet) throws SQLException {
-        return new Airship(UUID.fromString(resultSet.getString("id")),
+        return new Airship(UUID.fromString(resultSet.getString("airship_id")),
                 resultSet.getString("model"),
                 resultSet.getInt("economy_category"),
                 resultSet.getInt("business_category"),
@@ -19,7 +19,7 @@ public class EntityFactoryDAO {
     }
 
     public static Client createClient(ResultSet resultSet) throws SQLException {
-        Client client = new Client(UUID.fromString(resultSet.getString("id")),
+        Client client = new Client(UUID.fromString(resultSet.getString("client_id")),
                 resultSet.getString("first_name"),
                 resultSet.getString("middle_name"),
                 resultSet.getString("last_name"),
@@ -44,7 +44,7 @@ public class EntityFactoryDAO {
     }
 
     public static Route createRoute(ResultSet resultSet) throws SQLException {
-        return new Route(UUID.fromString(resultSet.getString("id")),
+        return new Route(UUID.fromString(resultSet.getString("route_id")),
                 resultSet.getString("start_point"),
                 resultSet.getString("end_point"));
     }

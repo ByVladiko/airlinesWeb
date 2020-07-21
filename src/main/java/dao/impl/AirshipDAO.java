@@ -20,7 +20,14 @@ public class AirshipDAO implements DAO<Airship> {
     }
 
     private static final String CREATE_AIRSHIP = "INSERT INTO airship VALUES(?, ?, ?, ?, ?)";
-    private static final String SELECT_AIRSHIP_BY_ID = "SELECT * FROM airship WHERE id = ?";
+    private static final String SELECT_AIRSHIP_BY_ID = "SELECT " +
+            "       id as airship_id,\n" +
+            "       model,\n" +
+            "       economy_category,\n" +
+            "       business_category,\n" +
+            "       premium_category\n" +
+            "FROM airship\n" +
+            "WHERE id = ?";
     private static final String UPDATE_AIRSHIP = "UPDATE airship\n" +
             "SET " +
             "       model = ?,\n" +
@@ -29,7 +36,13 @@ public class AirshipDAO implements DAO<Airship> {
             "       premium_category = ?\n" +
             " WHERE id = ?";
     private static final String DELETE_AIRSHIP_BY_ID = "DELETE FROM airship WHERE id = ?";
-    private static final String SELECT_ALL_AIRSHIPS = "SELECT * FROM airship";
+    private static final String SELECT_ALL_AIRSHIPS = "SELECT " +
+            "id as airship_id,\n" +
+            "       model,\n" +
+            "       economy_category,\n" +
+            "       business_category,\n" +
+            "       premium_category\n" +
+            "  FROM airship";
 
     @Override
     public void create(final Connection connection, Airship airship) throws SQLException {
@@ -84,8 +97,6 @@ public class AirshipDAO implements DAO<Airship> {
         }
         if (result == 0) {
             throw new SQLException("No one record have been updated");
-        } else if (result > 1) {
-            throw new SQLException("More than one record has been updated");
         }
     }
 

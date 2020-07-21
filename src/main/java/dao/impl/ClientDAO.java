@@ -20,48 +20,58 @@ public class ClientDAO implements DAO<Client> {
     private static final Logger logger = LoggerFactory.getLogger(ClientDAO.class);
 
     private static final String CREATE_CLIENT = "INSERT INTO client VALUES(?, ?, ?, ?, ?)";
-    private static final String GET_CLIENT_BY_ID = "SELECT  \n" +
-            "                                *  \n" +
-            "                        FROM   \n" +
-            "                                client a  \n" +
-            "                        LEFT JOIN  \n" +
-            "                                (SELECT  \n" +
-            "                                    b.id as ticket_id,  \n" +
-            "                                    b.client,  \n" +
-            "                                    b.category,   \n" +
-            "                                    b.cost, \n" +
-            "                                    b.baggage, \n" +
-            "                                    b.status,  \n" +
-            "                                    c.id as flight_id,   \n" +
-            "                                    c.date_of_departure,   \n" +
-            "                                    c.date_of_arrival, \n" +
-            "                                    d.id as airship_id, \n" +
-            "                                    d.model, \n" +
-            "                                    d.economy_category, \n" +
-            "                                    d.business_category, \n" +
-            "                                    d.premium_category, \n" +
-            "                                    e.id as route_id, \n" +
-            "                                    e.start_point, \n" +
-            "                                    e.end_point \n" +
-            "                                FROM  \n" +
-            "                                    ticket b  \n" +
-            "                                INNER JOIN  \n" +
-            "                                    flight c  \n" +
-            "                                ON  \n" +
-            "                                    b.flight = c.id \n" +
-            "                                INNER JOIN \n" +
-            "                                    airship d  \n" +
-            "                                ON \n" +
-            "                                    c.airship = d.id \n" +
-            "                                INNER JOIN \n" +
-            "                                    route e \n" +
-            "                                ON \n" +
-            "                                    c.route = e.id) f \n" +
-            "                                ON   \n" +
-            "                                    f.client = a.id\n" +
-            "                                WHERE \n" +
-            "                                    a.id = ?  \n" +
-            "                                ORDER BY a.id";
+    private static final String GET_CLIENT_BY_ID = "SELECT a.id AS client_id,\n" +
+            "       a.first_name,\n" +
+            "       a.middle_name,\n" +
+            "       a.last_name,\n" +
+            "       a.bill,\n" +
+            "       f.ticket_id,\n" +
+            "       f.client,\n" +
+            "       f.category,\n" +
+            "       f.cost,\n" +
+            "       f.baggage,\n" +
+            "       f.status,\n" +
+            "       f.flight_id,\n" +
+            "       f.date_of_departure,\n" +
+            "       f.date_of_arrival,\n" +
+            "       f.airship_id,\n" +
+            "       f.model,\n" +
+            "       f.economy_category,\n" +
+            "       f.business_category,\n" +
+            "       f.premium_category,\n" +
+            "       f.route_id,\n" +
+            "       f.start_point,\n" +
+            "       f.end_point\n" +
+            "  FROM client a\n" +
+            "       LEFT JOIN\n" +
+            "       (\n" +
+            "           SELECT b.id AS ticket_id,\n" +
+            "                  b.client,\n" +
+            "                  b.category,\n" +
+            "                  b.cost,\n" +
+            "                  b.baggage,\n" +
+            "                  b.status,\n" +
+            "                  c.id AS flight_id,\n" +
+            "                  c.date_of_departure,\n" +
+            "                  c.date_of_arrival,\n" +
+            "                  d.id AS airship_id,\n" +
+            "                  d.model,\n" +
+            "                  d.economy_category,\n" +
+            "                  d.business_category,\n" +
+            "                  d.premium_category,\n" +
+            "                  e.id AS route_id,\n" +
+            "                  e.start_point,\n" +
+            "                  e.end_point\n" +
+            "             FROM ticket b\n" +
+            "                  INNER JOIN\n" +
+            "                  flight c ON b.flight = c.id\n" +
+            "                  INNER JOIN\n" +
+            "                  airship d ON c.airship = d.id\n" +
+            "                  INNER JOIN\n" +
+            "                  route e ON c.route = e.id\n" +
+            "       )\n" +
+            "       f ON f.client = a.id\n" +
+            " WHERE a.id = ?\n";
 
     private static final String UPDATE_CLIENT = "UPDATE client " +
             "SET first_name = ?, " +
@@ -70,48 +80,57 @@ public class ClientDAO implements DAO<Client> {
             "bill = ? " +
             "WHERE id = ?";
     private static final String DELETE_CLIENT_BY_ID = "DELETE FROM client WHERE id = ?";
-    private static final String SELECT_ALL_CLIENTS = "SELECT \n" +
-            "                                * \n" +
-            "                        FROM  \n" +
-            "                                client a \n" +
-            "                        LEFT JOIN \n" +
-            "                                (SELECT \n" +
-            "                                    b.id as ticket_id, \n" +
-            "                                    b.client, \n" +
-            "                                    b.category,  \n" +
-            "                                    b.cost,\n" +
-            "                                    b.baggage,\n" +
-            "                                    b.status, \n" +
-            "                                    c.id as flight_id,  \n" +
-            "                                    c.date_of_departure,  \n" +
-            "                                    c.date_of_arrival,\n" +
-            "                                    c.airship,\n" +
-            "                                    c.route,\n" +
-            "                                    d.id as airship_id,\n" +
-            "                                    d.model,\n" +
-            "                                    d.economy_category,\n" +
-            "                                    d.business_category,\n" +
-            "                                    d.premium_category,\n" +
-            "                                    f.id as route_id,\n" +
-            "                                    f.start_point,\n" +
-            "                                    f.end_point\n" +
-            "                                FROM \n" +
-            "                                    ticket b \n" +
-            "                                INNER JOIN \n" +
-            "                                    flight c \n" +
-            "                                ON \n" +
-            "                                    b.flight = c.id\n" +
-            "                                INNER JOIN\n" +
-            "                                    airship d \n" +
-            "                                ON\n" +
-            "                                    c.airship = d.id\n" +
-            "                                INNER JOIN\n" +
-            "                                    route f\n" +
-            "                                ON\n" +
-            "                                    c.route = f.id) g\n" +
-            "                                ON  \n" +
-            "                                    g.client = a.id \n" +
-            "                                ORDER BY a.id";
+    private static final String SELECT_ALL_CLIENTS = "SELECT a.id AS client_id,\n" +
+            "       a.first_name,\n" +
+            "       a.middle_name,\n" +
+            "       a.last_name,\n" +
+            "       a.bill,\n" +
+            "       f.ticket_id,\n" +
+            "       f.client,\n" +
+            "       f.category,\n" +
+            "       f.cost,\n" +
+            "       f.baggage,\n" +
+            "       f.status,\n" +
+            "       f.flight_id,\n" +
+            "       f.date_of_departure,\n" +
+            "       f.date_of_arrival,\n" +
+            "       f.airship_id,\n" +
+            "       f.model,\n" +
+            "       f.economy_category,\n" +
+            "       f.business_category,\n" +
+            "       f.premium_category,\n" +
+            "       f.route_id,\n" +
+            "       f.start_point,\n" +
+            "       f.end_point\n" +
+            "  FROM client a\n" +
+            "       LEFT JOIN\n" +
+            "       (\n" +
+            "           SELECT b.id AS ticket_id,\n" +
+            "                  b.client,\n" +
+            "                  b.category,\n" +
+            "                  b.cost,\n" +
+            "                  b.baggage,\n" +
+            "                  b.status,\n" +
+            "                  c.id AS flight_id,\n" +
+            "                  c.date_of_departure,\n" +
+            "                  c.date_of_arrival,\n" +
+            "                  d.id AS airship_id,\n" +
+            "                  d.model,\n" +
+            "                  d.economy_category,\n" +
+            "                  d.business_category,\n" +
+            "                  d.premium_category,\n" +
+            "                  e.id AS route_id,\n" +
+            "                  e.start_point,\n" +
+            "                  e.end_point\n" +
+            "             FROM ticket b\n" +
+            "                  INNER JOIN\n" +
+            "                  flight c ON b.flight = c.id\n" +
+            "                  INNER JOIN\n" +
+            "                  airship d ON c.airship = d.id\n" +
+            "                  INNER JOIN\n" +
+            "                  route e ON c.route = e.id\n" +
+            "       )\n" +
+            "       f ON f.client = a.id";
 
     @Override
     public void create(final Connection connection, Client client) throws SQLException {
@@ -193,8 +212,7 @@ public class ClientDAO implements DAO<Client> {
             List<Client> clientList = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_CLIENTS);
             while (resultSet.next()) {
-                Client client = createClient(resultSet);
-                clientList.add(client);
+                clientList.add(createClient(resultSet));
             }
             return clientList;
         } catch (SQLException e) {

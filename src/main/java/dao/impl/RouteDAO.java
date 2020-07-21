@@ -20,10 +20,18 @@ public class RouteDAO implements DAO<Route> {
     private static final Logger logger = LoggerFactory.getLogger(RouteDAO.class);
 
     private static final String CREATE_ROUTE = "INSERT INTO route VALUES(?, ?, ?)";
-    private static final String GET_ROUTE_BY_ID = "SELECT * FROM route WHERE id = ?";
+    private static final String GET_ROUTE_BY_ID = "SELECT\n" +
+            "id as route_id,\n" +
+            "start_point,\n" +
+            "end_point\n" +
+            "FROM route WHERE id = ?";
     private static final String UPDATE_ROUTE = "UPDATE route SET start_point = ?, end_point = ? WHERE id = ?";
     private static final String DELETE_ROUTE = "DELETE FROM route WHERE id = ?";
-    private static final String SELECT_ALL_ROUTES = "SELECT * FROM route";
+    private static final String SELECT_ALL_ROUTES = "SELECT\n" +
+            "id as route_id,\n" +
+            "start_point,\n" +
+            "end_point\n" +
+            "FROM route";
 
     @Override
     public void create(final Connection connection, Route route) throws SQLException {
