@@ -1,8 +1,6 @@
 package service.businessLogic;
 
-import model.Client;
-import model.Status;
-import model.Ticket;
+import model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import service.BusinessService;
@@ -44,6 +42,23 @@ public class BusinessServiceTest extends SQLTestOperations {
     }
 
     @Test
+    public void buyTicketToClientNotEnoughMoneyException() throws SQLException {
+        connection.setAutoCommit(false);
+
+        Client client = createClient();
+
+        Ticket ticket = createTicket();
+        ticket.setStatus(Status.FREE);
+        ticket.setCost(1000);
+        ticketDAO.update(connection, ticket);
+
+        client.setBill(0);
+        clientDAO.update(connection, client);
+
+        Assert.assertThrows(BusinessServiceException.class, () -> businessService.buyTicketToClient(connection, client, ticket));
+    }
+
+    @Test
     public void addTicketToDB() throws SQLException, BusinessServiceException {
         connection.setAutoCommit(false);
 
@@ -57,5 +72,27 @@ public class BusinessServiceTest extends SQLTestOperations {
         Assert.assertEquals(ticket, actual);
 
         connection.rollback();
+    }
+
+    @Test
+    public void addTicketToDBOutOfSeats() throws SQLException, BusinessServiceException {
+        connection.setAutoCommit(false);
+
+        Ticket ticket = GeneratorSQL.getRandomTicket();
+
+        Airship airship = GeneratorSQL.getRandomAirship();
+        airship.setPremiumCategory(0);
+        airship.setEconomyCategory(0);
+        airship.setBusinessCategory(0);
+
+        Flight flight = ticket.getFlight();
+        flight.setAirship(airship);
+
+        airshipDAO.create(connection, airship);
+        routeDAO.create(connection, flight.getRoute());
+        flightDAO.create(connection, flight);
+        businessService.addTicketToDB(connection, ticket);
+
+        Assert.assertThrows(BusinessServiceException.class, () -> businessService.addTicketToDB(connection, ticket));
     }
 }
