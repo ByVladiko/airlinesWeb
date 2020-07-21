@@ -94,7 +94,8 @@ public class TicketDAO implements DAO<Ticket> {
             "                    b.route = d.id\n";
 
     @Override
-    public void create(final Connection connection, Ticket ticket) {
+    public void create(final Connection connection, Ticket ticket) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_TICKET)) {
             statement.setString(1, ticket.getId().toString());
             statement.setString(2, ticket.getFlight().getId().toString());
@@ -103,35 +104,38 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setFloat(5, ticket.getBaggage());
             statement.setInt(6, ticket.getStatus().getIndex());
             statement.setString(7, null);
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Record has not been inserted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("Record has not been inserted");
         }
     }
 
     @Override
     public Ticket getById(final Connection connection, String id) throws SQLException {
+        Ticket ticket = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_TICKET_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createTicket(resultSet);
-            } else {
-                throw new SQLException("Can't get record by this id");
+                ticket = createTicket(resultSet);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        throw new SQLException("Unsuccessful operation");
+        if (ticket == null) {
+            throw new SQLException("Record has not been inserted");
+        }
+        return ticket;
     }
 
     @Override
-    public void update(final Connection connection, Ticket ticket) {
+    public void update(final Connection connection, Ticket ticket) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_TICKET)) {
             statement.setString(1, ticket.getFlight().getId().toString());
             statement.setInt(2, ticket.getCategory().getIndex());
@@ -139,26 +143,28 @@ public class TicketDAO implements DAO<Ticket> {
             statement.setFloat(4, ticket.getBaggage());
             statement.setFloat(5, ticket.getStatus().getIndex());
             statement.setString(6, ticket.getId().toString());
-            statement.executeUpdate();
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+        if (result == 0) {
+            throw new SQLException("No one record have been updated");
+        }
     }
 
     @Override
-    public void delete(final Connection connection, Ticket ticket) {
+    public void delete(final Connection connection, Ticket ticket) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_TICKET_BY_ID)) {
             statement.setString(1, ticket.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record has been deleted");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been deleted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("No one record has been deleted");
         }
     }
 

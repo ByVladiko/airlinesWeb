@@ -76,73 +76,78 @@ public class FlightDAO implements DAO<Flight> {
             "                                a.route = c.id";
 
     @Override
-    public void create(final Connection connection, Flight flight) {
+    public void create(final Connection connection, Flight flight) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_FLIGHT);) {
             statement.setString(1, flight.getId().toString());
             statement.setString(2, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(3, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(4, flight.getAirship().getId().toString());
             statement.setString(5, flight.getRoute().getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Record has not been inserted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("Record has not been inserted");
         }
     }
 
     @Override
     public Flight getById(Connection connection, String id) throws SQLException {
+        Flight flight = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createFlight(resultSet);
-            } else {
-                throw new SQLException("Can't get record by this id");
+                flight = createFlight(resultSet);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        throw new SQLException("Unsuccessful operation");
+        if (flight == null) {
+            throw new SQLException("Can't get record by this id");
+        }
+        return flight;
     }
 
     @Override
-    public void update(final Connection connection, Flight flight) {
+    public void update(final Connection connection, Flight flight) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_FLIGHT)) {
             statement.setString(1, DateConverter.convert(flight.getDateOfDeparture()));
             statement.setString(2, DateConverter.convert(flight.getDateOfArrival()));
             statement.setString(3, flight.getAirship().getId().toString());
             statement.setString(4, flight.getRoute().getId().toString());
             statement.setString(5, flight.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record have been updated");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been updated");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+        if (result == 0) {
+            throw new SQLException("No one record have been updated");
+        } else if (result > 1) {
+            throw new SQLException("More than one record has been updated");
+        }
     }
 
     @Override
-    public void delete(final Connection connection, Flight flight) {
+    public void delete(final Connection connection, Flight flight) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_FLIGHT)) {
             statement.setString(1, flight.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record has been deleted");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been deleted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("No one record has been deleted");
+        } else if (result > 1) {
+            throw new SQLException("More than one record has been deleted");
         }
     }
 

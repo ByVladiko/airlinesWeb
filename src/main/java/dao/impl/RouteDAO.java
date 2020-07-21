@@ -26,69 +26,70 @@ public class RouteDAO implements DAO<Route> {
     private static final String SELECT_ALL_ROUTES = "SELECT * FROM route";
 
     @Override
-    public void create(final Connection connection, Route route) {
+    public void create(final Connection connection, Route route) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_ROUTE)) {
             statement.setString(1, route.getId().toString());
             statement.setString(2, route.getStartPoint());
             statement.setString(3, route.getEndPoint());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Record has not been inserted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("Record has not been inserted");
         }
     }
 
     @Override
     public Route getById(final Connection connection, String id) throws SQLException {
+        Route route = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createRoute(resultSet);
-            } else {
-                throw new SQLException("Can't get record by this id");
+                route = createRoute(resultSet);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        throw new SQLException("Unsuccessful operation");
+        if (route == null) {
+            throw new SQLException("Can't get record by this id");
+        }
+        return route;
     }
 
     @Override
-    public void update(final Connection connection, Route route) {
+    public void update(final Connection connection, Route route) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_ROUTE)) {
             statement.setString(1, route.getStartPoint());
             statement.setString(2, route.getEndPoint());
             statement.setString(3, route.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record have been updated");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been updated");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+        if (result == 0) {
+            throw new SQLException("No one record have been updated");
+        }
     }
 
     @Override
-    public void delete(final Connection connection, Route route) {
+    public void delete(final Connection connection, Route route) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_ROUTE)) {
             statement.setString(1, route.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record has been deleted");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been deleted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("No one record has been deleted");
         }
     }
 

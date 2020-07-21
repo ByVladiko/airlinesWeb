@@ -32,74 +32,75 @@ public class AirshipDAO implements DAO<Airship> {
     private static final String SELECT_ALL_AIRSHIPS = "SELECT * FROM airship";
 
     @Override
-    public void create(final Connection connection, Airship airship) {
+    public void create(final Connection connection, Airship airship) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_AIRSHIP)) {
             statement.setString(1, airship.getId().toString());
             statement.setString(2, airship.getModel());
             statement.setInt(3, airship.getEconomyCategory());
             statement.setInt(4, airship.getBusinessCategory());
             statement.setInt(5, airship.getPremiumCategory());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Record has not been inserted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.getSQLState(), e);
             e.printStackTrace();
         }
+        if (result == 0) throw new SQLException("Record has not been inserted");
     }
 
     @Override
     public Airship getById(final Connection connection, String id) throws SQLException {
+        Airship airship = null;
         try (PreparedStatement statement = connection.prepareStatement(SELECT_AIRSHIP_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createAirship(resultSet);
-            } else {
-                throw new SQLException("Can't get record by this id");
+                airship = createAirship(resultSet);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        throw new SQLException("Unsuccessful operation");
+        if (airship == null) {
+            throw new SQLException("Can't get record by this id");
+        }
+        return airship;
     }
 
 
     @Override
-    public void update(final Connection connection, Airship airship) {
+    public void update(final Connection connection, Airship airship) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_AIRSHIP)) {
             statement.setString(1, airship.getModel());
             statement.setInt(2, airship.getEconomyCategory());
             statement.setInt(3, airship.getBusinessCategory());
             statement.setInt(4, airship.getPremiumCategory());
             statement.setString(5, airship.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record have been updated");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been updated");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+        if (result == 0) {
+            throw new SQLException("No one record have been updated");
+        } else if (result > 1) {
+            throw new SQLException("More than one record has been updated");
+        }
     }
 
     @Override
-    public void delete(final Connection connection, Airship airship) {
+    public void delete(final Connection connection, Airship airship) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_AIRSHIP_BY_ID)) {
             statement.setString(1, airship.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record has been deleted");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been deleted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("No one record has been deleted");
         }
     }
 

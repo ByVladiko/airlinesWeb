@@ -114,73 +114,76 @@ public class ClientDAO implements DAO<Client> {
             "                                ORDER BY a.id";
 
     @Override
-    public void create(final Connection connection, Client client) {
+    public void create(final Connection connection, Client client) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_CLIENT)) {
             statement.setString(1, client.getId().toString());
             statement.setString(2, client.getFirstName());
             statement.setString(3, client.getMiddleName());
             statement.setString(4, client.getLastName());
             statement.setFloat(5, client.getBill());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Record has not been inserted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("Record has not been inserted");
         }
     }
 
     @Override
     public Client getById(final Connection connection, String id) throws SQLException {
+        Client client = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return createClient(resultSet);
-            } else {
-                throw new SQLException("Can't get record by this id");
+                client = createClient(resultSet);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
-        throw new SQLException("Unsuccessful operation");
+        if (client == null) {
+            throw new SQLException("Can't get record by this id");
+        }
+        return client;
     }
 
     @Override
-    public void update(final Connection connection, Client client) {
+    public void update(final Connection connection, Client client) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_CLIENT)) {
             statement.setString(1, client.getFirstName());
             statement.setString(2, client.getMiddleName());
             statement.setString(3, client.getLastName());
             statement.setFloat(4, client.getBill());
             statement.setString(5, client.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record have been updated");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been updated");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+        if (result == 0) {
+            throw new SQLException("No one record have been updated");
+        } else if (result > 1) {
+            throw new SQLException("More than one record has been updated");
+        }
     }
 
     @Override
-    public void delete(final Connection connection, Client client) {
+    public void delete(final Connection connection, Client client) throws SQLException {
+        int result = 0;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_CLIENT_BY_ID)) {
             statement.setString(1, client.getId().toString());
-            int result = statement.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("No one record has been deleted");
-            } else if (result > 1) {
-                throw new SQLException("More than one record has been deleted");
-            }
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        }
+        if (result == 0) {
+            throw new SQLException("No one record has been deleted");
         }
     }
 
