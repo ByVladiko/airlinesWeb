@@ -51,7 +51,7 @@ public class RouteDAO implements DAO<Route> {
     }
 
     @Override
-    public Route getById(final Connection connection, String id) throws SQLException {
+    public Route getById(final Connection connection, String id) {
         Route route = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_ROUTE_BY_ID)) {
             statement.setString(1, id);
@@ -62,9 +62,6 @@ public class RouteDAO implements DAO<Route> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-        }
-        if (route == null) {
-            throw new SQLException("Can't get record by this id");
         }
         return route;
     }

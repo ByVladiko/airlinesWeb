@@ -115,7 +115,7 @@ public class TicketDAO implements DAO<Ticket> {
     }
 
     @Override
-    public Ticket getById(final Connection connection, String id) throws SQLException {
+    public Ticket getById(final Connection connection, String id) {
         Ticket ticket = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_TICKET_BY_ID)) {
             statement.setString(1, id);
@@ -126,9 +126,6 @@ public class TicketDAO implements DAO<Ticket> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-        }
-        if (ticket == null) {
-            throw new SQLException("Record has not been inserted");
         }
         return ticket;
     }

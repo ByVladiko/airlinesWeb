@@ -95,7 +95,7 @@ public class FlightDAO implements DAO<Flight> {
     }
 
     @Override
-    public Flight getById(Connection connection, String id) throws SQLException {
+    public Flight getById(Connection connection, String id) {
         Flight flight = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_FLIGHT_BY_ID)) {
             statement.setString(1, id);
@@ -106,9 +106,6 @@ public class FlightDAO implements DAO<Flight> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-        }
-        if (flight == null) {
-            throw new SQLException("Can't get record by this id");
         }
         return flight;
     }

@@ -152,7 +152,7 @@ public class ClientDAO implements DAO<Client> {
     }
 
     @Override
-    public Client getById(final Connection connection, String id) throws SQLException {
+    public Client getById(final Connection connection, String id) {
         Client client = null;
         try (PreparedStatement statement = connection.prepareStatement(GET_CLIENT_BY_ID)) {
             statement.setString(1, id);
@@ -163,9 +163,6 @@ public class ClientDAO implements DAO<Client> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-        }
-        if (client == null) {
-            throw new SQLException("Can't get record by this id");
         }
         return client;
     }

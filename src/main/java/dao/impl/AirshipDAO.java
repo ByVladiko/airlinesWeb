@@ -62,7 +62,7 @@ public class AirshipDAO implements DAO<Airship> {
     }
 
     @Override
-    public Airship getById(final Connection connection, String id) throws SQLException {
+    public Airship getById(final Connection connection, String id) {
         Airship airship = null;
         try (PreparedStatement statement = connection.prepareStatement(SELECT_AIRSHIP_BY_ID)) {
             statement.setString(1, id);
@@ -73,9 +73,6 @@ public class AirshipDAO implements DAO<Airship> {
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
-        }
-        if (airship == null) {
-            throw new SQLException("Can't get record by this id");
         }
         return airship;
     }
