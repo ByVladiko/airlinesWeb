@@ -27,7 +27,7 @@ public class SQLTestOperations {
         DatabaseConnectTest.registryDriver();
         connection = DatabaseConnectTest.getConnection();
         Files.walk(Paths.get("src/test/resources/sql"))
-                .filter(Files::isRegularFile)
+                .filter(folder -> Files.isRegularFile(folder))
                 .collect(Collectors.toList())
                 .forEach(pathToFile -> DatabaseConnectTest.executeSqlScriptFile(connection, pathToFile));
         connection.setAutoCommit(false);
