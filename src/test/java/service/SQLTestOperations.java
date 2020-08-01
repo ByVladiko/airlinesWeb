@@ -6,8 +6,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import util.GeneratorSQL;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
 
 public class SQLTestOperations {
 
@@ -19,9 +23,13 @@ public class SQLTestOperations {
     protected final ClientDAO clientDAO = new ClientDAO();
 
     @BeforeClass
-    public static void registryDriver() throws SQLException {
+    public static void registryDriver() throws SQLException, IOException {
         DatabaseConnectTest.registryDriver();
         connection = DatabaseConnectTest.getConnection();
+        Files.walk(Paths.get("src/test/resources/sql"))
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList())
+                .forEach(pathToFile -> DatabaseConnectTest.executeSqlScriptFile(connection, pathToFile));
         connection.setAutoCommit(false);
         System.out.println("Successful database connection");
     }
