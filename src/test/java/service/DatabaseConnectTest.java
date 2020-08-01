@@ -3,10 +3,14 @@ package service;
 import org.sqlite.JDBC;
 import org.sqlite.SQLiteConfig;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 public class DatabaseConnectTest {
@@ -14,7 +18,6 @@ public class DatabaseConnectTest {
     private static String path;
     private static String dbType;
     private static String pathToDb;
-    private static String dbName;
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
@@ -28,7 +31,6 @@ public class DatabaseConnectTest {
 
             dbType = property.getProperty("DB_TYPE");
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
-            dbName = property.getProperty("DB_NAME");
             dbSchema = property.getProperty("DB_SCHEMA");
 
             sqLiteConfig = new SQLiteConfig();
@@ -36,10 +38,9 @@ public class DatabaseConnectTest {
 
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
-                path = String.format("jdbc:%s:%s%s",
+                path = String.format("jdbc:%s:%s",
                         DatabaseConnectTest.dbType,
-                        DatabaseConnectTest.pathToDb,
-                        DatabaseConnectTest.dbName);
+                        DatabaseConnectTest.pathToDb);
             }
 
         } catch (IOException | SQLException e) {
@@ -50,6 +51,27 @@ public class DatabaseConnectTest {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(path, sqLiteConfig.toProperties());
+    }
+
+    public static void executeSqlScriptFile(final Connection connection, Path path) {
+        try {
+            FileReader fileReader = new FileReader(path.toFile());
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            StringBuilder command = new StringBuilder();
+            while ((line = bufferedReader.readLine()) != null) {
+                command.append(line + "\n");
+                if (line.contains(";")) {
+                    try (Statement statement = connection.createStatement()) {
+                        statement.execute(command.toString());
+                        command = new StringBuilder();
+                    }
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
 }

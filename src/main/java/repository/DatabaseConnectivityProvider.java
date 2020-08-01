@@ -16,7 +16,6 @@ public class DatabaseConnectivityProvider {
     private static String path;
     private static String dbType;
     private static String pathToDb;
-    private static String dbName;
     private static String dbSchema;
     private static SQLiteConfig sqLiteConfig;
 
@@ -32,7 +31,6 @@ public class DatabaseConnectivityProvider {
 
             dbType = property.getProperty("DB_TYPE");
             pathToDb = property.getProperty("RELATIVE_PATH_TO_DB");
-            dbName = property.getProperty("DB_NAME");
             dbSchema = property.getProperty("DB_SCHEMA");
 
             sqLiteConfig = new SQLiteConfig();
@@ -40,10 +38,9 @@ public class DatabaseConnectivityProvider {
 
             if (dbType.equals("sqlite")) {
                 DriverManager.registerDriver(new JDBC());
-                path = String.format("jdbc:%s:%s%s",
+                path = String.format("jdbc:%s:%s",
                         DatabaseConnectivityProvider.dbType,
-                        DatabaseConnectivityProvider.pathToDb,
-                        DatabaseConnectivityProvider.dbName);
+                        DatabaseConnectivityProvider.pathToDb);
             }
 
         } catch (IOException | SQLException e) {
