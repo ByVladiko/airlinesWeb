@@ -1,6 +1,6 @@
 package util;
 
-import model.*;
+import com.airlines.model.*;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package model;
+package com.airlines.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -77,7 +77,7 @@ public class Airship {
     public String toString() {
         return "Airship{" +
                 "id=" + id +
-                ", model='" + model + '\'' +
+                ", com.airlines.model='" + model + '\'' +
                 ", economyCategory=" + economyCategory +
                 ", businessCategory=" + businessCategory +
                 ", premiumCategory=" + premiumCategory +

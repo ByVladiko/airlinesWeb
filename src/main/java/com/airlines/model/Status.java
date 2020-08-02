@@ -1,4 +1,4 @@
-package model;
+package com.airlines.model;
 
 public enum Status {
 
