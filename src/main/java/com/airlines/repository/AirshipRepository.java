@@ -1,8 +1,10 @@
-package repository;
+package com.airlines.repository;
 
-import model.Airship;
+import com.airlines.model.Airship;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface AirshipRepository extends CrudRepository<Airship, Integer> {
 
 }
