@@ -1,9 +1,13 @@
 package model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.UUID;
 
+@Entity
 public class Airship {
 
+    @Id
     private UUID id;
     private String model;
     private int economyCategory;
@@ -24,6 +28,9 @@ public class Airship {
         this.economyCategory = economyCategory;
         this.businessCategory = businessCategory;
         this.premiumCategory = premiumCategory;
+    }
+
+    public Airship() {
     }
 
     public UUID getId() {
