@@ -1,12 +1,12 @@
-package controller;
+package com.airlines.controller;
 
-import model.Airship;
+import com.airlines.model.Airship;
+import com.airlines.repository.AirshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import repository.AirshipRepository;
 
 import java.util.Map;
 
@@ -16,14 +16,14 @@ public class MainController {
     @Autowired
     private AirshipRepository airshipRepository;
 
-    @GetMapping
-    public String main(Map<String, Object> params) {
+    @GetMapping(path = "/airships")
+    public String greeting(Map<String, Object> params) {
         Iterable<Airship> airships = airshipRepository.findAll();
         params.put("airships", airships);
-        return "index";
+        return "airships";
     }
 
-    @PostMapping
+    @PostMapping(path = "/airships")
     public String add(@RequestParam String model,
                       @RequestParam int economy,
                       @RequestParam int business,
@@ -36,7 +36,7 @@ public class MainController {
         Iterable<Airship> airships = airshipRepository.findAll();
         params.put("airships", airships);
 
-        return "index";
+        return "airships";
     }
 
 }
