@@ -1,16 +1,23 @@
 package com.airlines.model;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 public class Client {
 
+    @Id
     private UUID id;
     private String firstName;
     private String middleName;
     private String lastName;
     private float bill;
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Ticket> tickets;
 
     public Client(UUID id, String firstName, String middleName, String lastName, float bill, List<Ticket> tickets) {
@@ -56,6 +63,9 @@ public class Client {
         this.lastName = lastName;
         this.bill = 0;
         this.tickets = new ArrayList<>();
+    }
+
+    public Client() {
     }
 
     public UUID getId() {

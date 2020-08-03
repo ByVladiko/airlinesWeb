@@ -77,7 +77,7 @@ public class Airship {
     public String toString() {
         return "Airship{" +
                 "id=" + id +
-                ", com.airlines.model='" + model + '\'' +
+                ", model='" + model + '\'' +
                 ", economyCategory=" + economyCategory +
                 ", businessCategory=" + businessCategory +
                 ", premiumCategory=" + premiumCategory +

@@ -1,14 +1,20 @@
 package com.airlines.model;
 
+import javax.persistence.*;
 import java.util.UUID;
 
+@Entity
 public class Ticket {
 
+    @Id
     private UUID id;
+    @ManyToOne(fetch = FetchType.EAGER)
     private Flight flight;
+    @Enumerated(EnumType.ORDINAL)
     private Category category;
     private float cost;
     private float baggage;
+    @Enumerated(EnumType.ORDINAL)
     private Status status;
 
     public Ticket(UUID id, Flight flight, Category category, float cost, float baggage, Status status) {
@@ -27,6 +33,9 @@ public class Ticket {
         this.cost = cost;
         this.baggage = baggage;
         this.status = status;
+    }
+
+    public Ticket() {
     }
 
     public UUID getId() {

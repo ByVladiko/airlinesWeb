@@ -1,13 +1,16 @@
 package com.airlines.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.UUID;
 
+@Entity
 public class Route {
 
+    @Id
     private UUID id;
     private String startPoint;
     private String endPoint;
-
 
     public Route(String startPoint, String endPoint) {
         this.id = UUID.randomUUID();
@@ -19,6 +22,9 @@ public class Route {
         this.id = id;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
+    }
+
+    public Route() {
     }
 
     public UUID getId() {
