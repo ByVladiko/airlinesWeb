@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Routes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <div th:insert="~{parts/bootstrap :: bootstrap}"></div>
+</head>
+<body>
+<div th:insert="~{parts/navbar :: navbar}"></div>
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <h1 class="center-block text-center">Routes</h1>
+    <form method="post" action="/routes">
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="startPoint">Start point</label>
+                <input id="startPoint" name="startPoint" type="text" class="form-control" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="endPoint">End point</label>
+                <input id="endPoint" name="endPoint" type="text" class="form-control" required>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <table class="table table-striped table-bordered table-hover mt-4">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Start point</th>
+            <th scope="col">End point</th>
+        </tr>
+        </thead>
+        <tr th:each="route : ${routes}">
+            <td th:text="${route.id}"></td>
+            <td th:text="${route.startPoint}"></td>
+            <td th:text="${route.endPoint}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

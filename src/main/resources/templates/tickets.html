@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Tickets</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <div th:insert="~{parts/bootstrap :: bootstrap}"></div>
+</head>
+<body>
+<div th:insert="~{parts/navbar :: navbar}"></div>
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <h1 class="center-block text-center">Tickets</h1>
+    <form method="post" action="/tickets">
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="inputFlight">Flight</label>
+                <select name="flightId" class="custom-select" id="inputFlight" required>
+                    <option selected disabled value="">Choose...</option>
+                    <option th:each="flight : ${flights}"
+                            th:value="${flight.id}"
+                            th:utext="${flight.toString()}"/>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="inputCategory">Flight</label>
+                <select name="category" class="custom-select" id="inputCategory" required>
+                    <option selected disabled value="">Choose...</option>
+                    <option th:each="category : ${categories}"
+                            th:value="${category}"
+                            th:utext="${category}"/>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3 mb-3">
+                    <label for="inputCost">Cost</label>
+                    <input name="cost" type="number" step="0.01" class="form-control" id="inputCost" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="inputBaggage">Cost</label>
+                    <input name="baggage" type="number" step="0.01" class="form-control" id="inputBaggage" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="inputStatus">Flight</label>
+                    <select name="status" class="custom-select" id="inputStatus" required>
+                        <option selected disabled value="">Choose...</option>
+                        <option th:each="status : ${statuses}"
+                                th:value="${status}"
+                                th:utext="${status}"/>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <table class="table table-striped table-bordered table-hover mt-4">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Flight</th>
+            <th scope="col">Category</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Baggage</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead>
+        <tr th:each="ticket : ${tickets}">
+            <td th:text="${ticket.id}"></td>
+            <td th:text="${flight.dateOfDeparture}"></td>
+            <td th:text="${flight.dateOfArrival}"></td>
+            <td th:text="${flight.route}"></td>
+            <td th:text="${flight.airship}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
