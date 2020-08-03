@@ -4,7 +4,12 @@ import com.airlines.model.Airship;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface AirshipRepository extends CrudRepository<Airship, Integer> {
+import java.util.Optional;
+import java.util.UUID;
 
+@Repository
+public interface AirshipRepository extends CrudRepository<Airship, UUID> {
+
+    @Override
+    Optional<Airship> findById(UUID uuid);
 }
