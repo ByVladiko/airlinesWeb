@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 
 @Controller
-public class MainController {
+public class AirshipController {
 
     @Autowired
     private AirshipRepository airshipRepository;
@@ -29,7 +29,6 @@ public class MainController {
                       @RequestParam int business,
                       @RequestParam int premium,
                       Map<String, Object> params) {
-
         Airship airship = new Airship(model, economy, business, premium);
         airshipRepository.save(airship);
 
