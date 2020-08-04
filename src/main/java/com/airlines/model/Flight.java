@@ -83,13 +83,7 @@ public class Flight {
 
     @Override
     public String toString() {
-        return "Flight{" +
-                "id=" + id +
-                ", dateOfDeparture=" + dateOfDeparture +
-                ", dateOfArrival=" + dateOfArrival +
-                ", airship=" + airship +
-                ", route=" + route +
-                '}';
+        return String.format("%s %s - %s", route.toString(), dateOfDeparture, dateOfArrival);
     }
 
     @Override
