@@ -42,10 +42,10 @@ public class GeneratorSQL {
     public static Ticket getRandomTicket() {
         return new Ticket(UUID.randomUUID(),
                 getRandomFlight(),
-                Category.byOrdinal(getRandomInt(1, 4)),
+                Category.values()[getRandomInt(0, Category.values().length)],
                 getRandomFloat(1000, 5000),
                 getRandomFloat(1, 50),
-                Status.byOrdinal(getRandomInt(1, 4)));
+                Status.values()[getRandomInt(0, Status.values().length)]);
     }
 
     public static String getRandomString() {
