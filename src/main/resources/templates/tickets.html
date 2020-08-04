@@ -18,11 +18,11 @@
                     <option selected disabled value="">Choose...</option>
                     <option th:each="flight : ${flights}"
                             th:value="${flight.id}"
-                            th:utext="${flight.toString()}"/>
+                            th:utext="${flight.route + ' ' + flight.dateOfDeparture + ' - ' + flight.dateOfArrival}"/>
                 </select>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="inputCategory">Flight</label>
+                <label for="inputCategory">Category</label>
                 <select name="category" class="custom-select" id="inputCategory" required>
                     <option selected disabled value="">Choose...</option>
                     <option th:each="category : ${categories}"
@@ -30,24 +30,24 @@
                             th:utext="${category}"/>
                 </select>
             </div>
-            <div class="form-row">
-                <div class="col-md-3 mb-3">
-                    <label for="inputCost">Cost</label>
-                    <input name="cost" type="number" step="0.01" class="form-control" id="inputCost" required>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="inputBaggage">Cost</label>
-                    <input name="baggage" type="number" step="0.01" class="form-control" id="inputBaggage" required>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="inputStatus">Flight</label>
-                    <select name="status" class="custom-select" id="inputStatus" required>
-                        <option selected disabled value="">Choose...</option>
-                        <option th:each="status : ${statuses}"
-                                th:value="${status}"
-                                th:utext="${status}"/>
-                    </select>
-                </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="inputCost">Cost</label>
+                <input name="cost" type="number" step="0.01" class="form-control" id="inputCost" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="inputBaggage">Baggage</label>
+                <input name="baggage" type="number" step="0.01" class="form-control" id="inputBaggage" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="inputStatus">Status</label>
+                <select name="status" class="custom-select" id="inputStatus" required>
+                    <option selected disabled value="">Choose...</option>
+                    <option th:each="status : ${statuses}"
+                            th:value="${status}"
+                            th:utext="${status}"/>
+                </select>
             </div>
         </div>
         <button class="btn btn-primary" type="submit">Submit</button>
@@ -55,20 +55,28 @@
     <table class="table table-striped table-bordered table-hover mt-4">
         <thead>
         <tr>
-            <th scope="col">id</th>
-            <th scope="col">Flight</th>
-            <th scope="col">Category</th>
-            <th scope="col">Cost</th>
-            <th scope="col">Baggage</th>
-            <th scope="col">Status</th>
+            <th scope="col" rowspan="2">#</th>
+            <th scope="col" colspan="3">Flight</th>
+            <th scope="col" rowspan="2">Category</th>
+            <th scope="col" rowspan="2">Cost</th>
+            <th scope="col" rowspan="2">Baggage</th>
+            <th scope="col" rowspan="2">Status</th>
+        </tr>
+        <tr>
+            <th>Route</th>
+            <th>Date departure</th>
+            <th>Date arrival</th>
         </tr>
         </thead>
-        <tr th:each="ticket : ${tickets}">
-            <td th:text="${ticket.id}"></td>
-            <td th:text="${flight.dateOfDeparture}"></td>
-            <td th:text="${flight.dateOfArrival}"></td>
-            <td th:text="${flight.route}"></td>
-            <td th:text="${flight.airship}"></td>
+        <tr th:each="ticket, iter : ${tickets}">
+            <td th:text="${iter.count}"></td>
+            <td th:text="${ticket.flight.route}"></td>
+            <td th:text="${ticket.flight.dateOfDeparture}"></td>
+            <td th:text="${ticket.flight.dateOfArrival}"></td>
+            <td th:text="${ticket.category}"></td>
+            <td th:text="${ticket.cost}"></td>
+            <td th:text="${ticket.baggage}"></td>
+            <td th:text="${ticket.status}"></td>
         </tr>
     </table>
 </div>

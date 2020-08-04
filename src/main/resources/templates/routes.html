@@ -26,13 +26,13 @@
     <table class="table table-striped table-bordered table-hover mt-4">
         <thead>
         <tr>
-            <th scope="col">id</th>
+            <th scope="col">#</th>
             <th scope="col">Start point</th>
             <th scope="col">End point</th>
         </tr>
         </thead>
-        <tr th:each="route : ${routes}">
-            <td th:text="${route.id}"></td>
+        <tr th:each="route, iter : ${routes}">
+            <td th:text="${iter.count}"></td>
             <td th:text="${route.startPoint}"></td>
             <td th:text="${route.endPoint}"></td>
         </tr>
