@@ -2,7 +2,11 @@ package util;
 
 import com.airlines.model.*;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Random;
+import java.util.UUID;
 
 public class GeneratorSQL {
 
@@ -61,7 +65,7 @@ public class GeneratorSQL {
                 .toString();
     }
 
-    public static Date getRandomDate() {
+    public static LocalDateTime getRandomDate() {
 
         GregorianCalendar gc = new GregorianCalendar();
         Random random = new Random();
@@ -77,7 +81,7 @@ public class GeneratorSQL {
         gc.set(Calendar.SECOND, getRandomInt(0, 60));
         gc.set(Calendar.MILLISECOND, 0);
 
-        return gc.getTime();
+        return gc.toZonedDateTime().toLocalDateTime();
     }
 
     public static int getRandomInt(int min, int max) {

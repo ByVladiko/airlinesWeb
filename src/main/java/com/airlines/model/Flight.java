@@ -1,12 +1,10 @@
 package com.airlines.model;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -14,15 +12,14 @@ public class Flight {
 
     @Id
     private UUID id;
-    @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
-    private Date dateOfDeparture;
-    private Date dateOfArrival;
+    private LocalDateTime dateOfDeparture;
+    private LocalDateTime dateOfArrival;
     @ManyToOne(fetch = FetchType.EAGER)
     private Airship airship;
     @ManyToOne(fetch = FetchType.EAGER)
     private Route route;
 
-    public Flight(UUID id, Date dateOfDeparture, Date dateOfArrival, Airship airship, Route route) {
+    public Flight(UUID id, LocalDateTime dateOfDeparture, LocalDateTime dateOfArrival, Airship airship, Route route) {
         this.id = id;
         this.dateOfDeparture = dateOfDeparture;
         this.dateOfArrival = dateOfArrival;
@@ -30,7 +27,7 @@ public class Flight {
         this.route = route;
     }
 
-    public Flight(Date dateOfDeparture, Date dateOfArrival, Airship airship, Route route) {
+    public Flight(LocalDateTime dateOfDeparture, LocalDateTime dateOfArrival, Airship airship, Route route) {
         this.id = UUID.randomUUID();
         this.dateOfDeparture = dateOfDeparture;
         this.dateOfArrival = dateOfArrival;
@@ -49,19 +46,19 @@ public class Flight {
         this.id = id;
     }
 
-    public Date getDateOfDeparture() {
+    public LocalDateTime getDateOfDeparture() {
         return dateOfDeparture;
     }
 
-    public void setDateOfDeparture(Date dateOfDeparture) {
+    public void setDateOfDeparture(LocalDateTime dateOfDeparture) {
         this.dateOfDeparture = dateOfDeparture;
     }
 
-    public Date getDateOfArrival() {
+    public LocalDateTime getDateOfArrival() {
         return dateOfArrival;
     }
 
-    public void setDateOfArrival(Date dateOfArrival) {
+    public void setDateOfArrival(LocalDateTime dateOfArrival) {
         this.dateOfArrival = dateOfArrival;
     }
 
