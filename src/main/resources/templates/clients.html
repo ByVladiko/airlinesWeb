@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <div th:insert="~{parts/bootstrap :: bootstrap}"></div>
+    <script type="text/javascript" th:src="@{/js/main.js}"></script>
 </head>
 <body>
 <div th:insert="~{parts/navbar :: navbar}"></div>
@@ -27,14 +28,15 @@
         </div>
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-    <table class="table table-striped table-bordered table-hover mt-4">
+    <table class="table table-striped table-bordered table-hover mt-4" th:if="${not #lists.isEmpty(clients)}">
         <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">First name</th>
-            <th scope="col">Middle name</th>
-            <th scope="col">Last name</th>
-            <th scope="col">Bill</th>
+            <th style="width: 5%">#</th>
+            <th style="width: 22.5%">First name</th>
+            <th style="width: 22.5%">Middle name</th>
+            <th style="width: 22.5%">Last name</th>
+            <th style="width: 22.5%">Bill</th>
+            <th style="width: 5%">Actions</th>
         </tr>
         </thead>
         <tr th:each="client, iter : ${clients}">
@@ -43,8 +45,68 @@
             <td th:text="${client.middleName}"></td>
             <td th:text="${client.lastName}"></td>
             <td th:text="${client.bill}"></td>
+            <td class="col d-flex">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" title="Edit" th:data-id="${client.id}"
+                            th:onclick="getById(this.getAttribute('data-id'))">
+                        <svg width="25" height="25" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>
+                            <path fill-rule="evenodd"
+                                  d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger delBtn" data-toggle="modal"
+                            data-target="#modalDelWindow"
+                            th:attr="data-action=@{clients/delete/(id=${client.id})}">
+                        <svg width="25" height="25" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
+                            <path fill-rule="evenodd"
+                                  d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </td>
         </tr>
     </table>
 </div>
+<div class="modal fade" id="modalEditWindow" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/clients/update">
+                <div class="modal-body">
+                    <input id="id-edit" name="id" type="hidden" required>
+                    <div class="form-group">
+                        <label for="firstName-edit">First name</label>
+                        <input id="firstName-edit" name="firstName" type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="middleName-edit">Middle name</label>
+                        <input id="middleName-edit" name="middleName" type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName-edit">Last name</label>
+                        <input id="lastName-edit" name="lastName" type="text" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:insert="~{parts/modal :: confirmDel}"></div>
 </body>
 </html>
