@@ -1,6 +1,6 @@
 package com.airlines.controller;
 
-import com.airlines.model.Client;
+import com.airlines.model.airship.Client;
 import com.airlines.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,12 @@ import java.util.UUID;
 @Controller
 public class ClientController {
 
+    private final ClientRepository clientRepository;
+
     @Autowired
-    private ClientRepository clientRepository;
+    public ClientController(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
 
     @GetMapping(path = "/clients")
     public String greeting(Map<String, Object> params) {

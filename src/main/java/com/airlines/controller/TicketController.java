@@ -1,9 +1,9 @@
 package com.airlines.controller;
 
-import com.airlines.model.Category;
-import com.airlines.model.Flight;
-import com.airlines.model.Status;
-import com.airlines.model.Ticket;
+import com.airlines.model.airship.Category;
+import com.airlines.model.airship.Flight;
+import com.airlines.model.airship.Status;
+import com.airlines.model.airship.Ticket;
 import com.airlines.repository.FlightRepository;
 import com.airlines.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,14 @@ import java.util.UUID;
 @Controller
 public class TicketController {
 
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
+    private final TicketRepository ticketRepository;
     private FlightRepository flightRepository;
+
+    @Autowired
+    public TicketController(TicketRepository ticketRepository, FlightRepository flightRepository) {
+        this.ticketRepository = ticketRepository;
+        this.flightRepository = flightRepository;
+    }
 
     @GetMapping(path = "/tickets")
     public String greeting(Map<String, Object> params) {

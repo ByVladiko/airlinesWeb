@@ -1,6 +1,6 @@
 package com.airlines.controller;
 
-import com.airlines.model.Airship;
+import com.airlines.model.airship.Airship;
 import com.airlines.repository.AirshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,12 @@ import java.util.UUID;
 @Controller
 public class AirshipController {
 
+    private final AirshipRepository airshipRepository;
+
     @Autowired
-    private AirshipRepository airshipRepository;
+    public AirshipController(AirshipRepository airshipRepository) {
+        this.airshipRepository = airshipRepository;
+    }
 
     @GetMapping(path = "/airships")
     public String greeting(Map<String, Object> params) {

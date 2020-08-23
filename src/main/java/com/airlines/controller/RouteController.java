@@ -1,6 +1,6 @@
 package com.airlines.controller;
 
-import com.airlines.model.Route;
+import com.airlines.model.airship.Route;
 import com.airlines.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,12 @@ import java.util.UUID;
 @Controller
 public class RouteController {
 
+    private final RouteRepository routeRepository;
+
     @Autowired
-    private RouteRepository routeRepository;
+    public RouteController(RouteRepository routeRepository) {
+        this.routeRepository = routeRepository;
+    }
 
     @GetMapping(path = "/routes")
     public String greeting(Map<String, Object> params) {

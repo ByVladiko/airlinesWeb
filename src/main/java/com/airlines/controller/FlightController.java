@@ -1,8 +1,8 @@
 package com.airlines.controller;
 
-import com.airlines.model.Airship;
-import com.airlines.model.Flight;
-import com.airlines.model.Route;
+import com.airlines.model.airship.Airship;
+import com.airlines.model.airship.Flight;
+import com.airlines.model.airship.Route;
 import com.airlines.repository.AirshipRepository;
 import com.airlines.repository.FlightRepository;
 import com.airlines.repository.RouteRepository;
@@ -23,12 +23,16 @@ import java.util.UUID;
 @Controller
 public class FlightController {
 
+    private final FlightRepository flightRepository;
+    private final RouteRepository routeRepository;
+    private final AirshipRepository airshipRepository;
+
     @Autowired
-    private FlightRepository flightRepository;
-    @Autowired
-    private RouteRepository routeRepository;
-    @Autowired
-    private AirshipRepository airshipRepository;
+    public FlightController(FlightRepository flightRepository, RouteRepository routeRepository, AirshipRepository airshipRepository) {
+        this.flightRepository = flightRepository;
+        this.routeRepository = routeRepository;
+        this.airshipRepository = airshipRepository;
+    }
 
     @GetMapping(path = "/flights")
     public String greeting(Map<String, Object> params) {
