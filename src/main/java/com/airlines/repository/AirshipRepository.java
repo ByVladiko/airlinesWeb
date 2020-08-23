@@ -1,6 +1,6 @@
 package com.airlines.repository;
 
-import com.airlines.model.Airship;
+import com.airlines.model.airship.Airship;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;

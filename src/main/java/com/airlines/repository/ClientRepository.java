@@ -1,6 +1,6 @@
 package com.airlines.repository;
 
-import com.airlines.model.Client;
+import com.airlines.model.airship.Client;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

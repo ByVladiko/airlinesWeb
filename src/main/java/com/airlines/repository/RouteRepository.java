@@ -1,6 +1,6 @@
 package com.airlines.repository;
 
-import com.airlines.model.Route;
+import com.airlines.model.airship.Route;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
