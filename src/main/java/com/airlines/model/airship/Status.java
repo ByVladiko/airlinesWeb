@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 public enum Status {
     CLOSED, RESERVED, SOLD, FREE;
