@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,10 +40,6 @@ public class Flight {
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public LocalDateTime getDateOfDeparture() {

@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,10 +35,6 @@ public class Airship {
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getModel() {

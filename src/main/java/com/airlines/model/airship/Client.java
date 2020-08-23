@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -72,10 +72,6 @@ public class Client {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -100,20 +96,20 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
     public float getBill() {
         return bill;
     }
 
     public void setBill(float bill) {
         this.bill = bill;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -40,10 +40,6 @@ public class Ticket {
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public Flight getFlight() {
