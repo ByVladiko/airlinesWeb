@@ -1,6 +1,6 @@
 package util;
 
-import com.airlines.model.*;
+import com.airlines.model.airship.*;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
