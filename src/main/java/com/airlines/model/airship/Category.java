@@ -1,4 +1,4 @@
-package com.airlines.model;
+package com.airlines.model.airship;
 
 public enum Category {
     ECONOMY, PREMIUM, BUSINESS;
