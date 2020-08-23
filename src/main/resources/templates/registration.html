@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Registration</title>
+    <div th:insert="~{parts/bootstrap :: bootstrap}"></div>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+    <div class="card-body">
+        <form th:action="@{/registration}" method="post">
+            <a class="float-right btn btn-outline-primary" href="/login">Back</a>
+            <h4 class="card-title">Registration</h4>
+            <div class="form-group">
+                <label>Your firstname</label>
+                <input name="firstname" class="form-control" placeholder="Firstname" type="text">
+            </div>
+            <div class="form-group">
+                <label>Your middlename</label>
+                <input name="middlename" class="form-control" placeholder="Middlename" type="text">
+            </div>
+            <div class="form-group">
+                <label>Your lastname</label>
+                <input name="lastname" class="form-control" placeholder="Lastname" type="text">
+            </div>
+            <div class="form-group">
+                <label>Your login</label>
+                <input name="username" class="form-control" placeholder="Username" type="text">
+            </div>
+            <div class="form-group">
+                <label>Your password</label>
+                <input name="password" class="form-control" placeholder="******" type="password">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                <p th:if="${message != null}" th:text=${message}></p>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
