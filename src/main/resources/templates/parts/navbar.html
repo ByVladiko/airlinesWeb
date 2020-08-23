@@ -27,6 +27,13 @@
                 </li>
             </ul>
         </div>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <form th:action="@{/logout}" method="post">
+                    <input class="btn btn-outline-primary" type="submit" value="Sign Out"/>
+                </form>
+            </li>
+        </ul>
     </nav>
 </div>
 </body>
