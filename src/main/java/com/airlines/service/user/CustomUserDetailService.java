@@ -1,4 +1,4 @@
-package com.airlines.service;
+package com.airlines.service.user;
 
 import com.airlines.model.user.Role;
 import com.airlines.model.user.User;

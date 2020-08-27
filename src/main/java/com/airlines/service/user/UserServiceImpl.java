@@ -1,10 +1,10 @@
-package com.airlines.service;
+package com.airlines.service.user;
 
+import com.airlines.exception.UserAlreadyExistAuthenticationException;
+import com.airlines.exception.UserNotFoundException;
 import com.airlines.model.user.Role;
 import com.airlines.model.user.User;
 import com.airlines.repository.UserRepository;
-import com.airlines.service.exception.UserAlreadyExistAuthenticationException;
-import com.airlines.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

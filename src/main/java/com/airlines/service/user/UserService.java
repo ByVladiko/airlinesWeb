@@ -1,7 +1,7 @@
-package com.airlines.service;
+package com.airlines.service.user;
 
+import com.airlines.exception.UserNotFoundException;
 import com.airlines.model.user.User;
-import com.airlines.service.exception.UserNotFoundException;
 
 import java.util.List;
 import java.util.UUID;

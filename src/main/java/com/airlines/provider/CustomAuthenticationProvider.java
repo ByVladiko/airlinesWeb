@@ -2,7 +2,7 @@ package com.airlines.provider;
 
 import com.airlines.model.user.Role;
 import com.airlines.model.user.User;
-import com.airlines.service.UserService;
+import com.airlines.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
