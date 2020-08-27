@@ -31,3 +31,30 @@ function getById(id) {
         }
     })
 }
+
+function getTicketsByClient(id) {
+    $.ajax({
+        type: 'GET',
+        url: document.location.origin + '/tickets/getByClient/' + id,
+        success: function (list) {
+            let tbody = document.querySelector('table tbody').innerHTML;
+            let tickets = Object.values(list);
+            console.log(list);
+            for (let ticket in tickets) {
+                console.log(ticket);
+                // let row =
+                //     `<tr>
+                //     <td>${ticket.flight.route}</td>
+                //     <td>${ticket.flight.dateOfDeparture}</td>
+                //     <td>${ticket.flight.dateOfArrival}</td>
+                //     <td>${ticket.category}</td>
+                //     <td>${ticket.cost}</td>
+                //     <td>${ticket.baggage}</td>
+                //     <td>${ticket.status}</td>
+                //     </tr>`;
+                // tbody.append(row);
+            }
+            $('#modalTicketsOfClient').modal();
+        }
+    })
+}
