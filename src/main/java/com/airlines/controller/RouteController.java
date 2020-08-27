@@ -1,5 +1,6 @@
 package com.airlines.controller;
 
+import com.airlines.exception.RouteNotFoundException;
 import com.airlines.model.airship.Route;
 import com.airlines.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,16 @@ public class RouteController {
     @PostMapping(path = "/routes/update")
     public String update(@RequestParam String id,
                          @RequestParam String startPoint,
-                         @RequestParam String endPoint) {
-        Route route = routeRepository.findById(UUID.fromString(id)).get();
+                         @RequestParam String endPoint,
+                         Map<String, Object> model) {
+        Route route;
+        try {
+            route = routeRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new RouteNotFoundException("Route not found"));
+        } catch (RouteNotFoundException e) {
+            model.put("exception", e.getMessage());
+            return "redirect:/routes";
+        }
         route.setStartPoint(startPoint);
         route.setEndPoint(endPoint);
         routeRepository.save(route);
@@ -59,7 +68,13 @@ public class RouteController {
 
     @GetMapping(value = "/routes/getById/{id}")
     public ResponseEntity<Route> getById(@PathVariable(name = "id") String id) {
-        final Route route = routeRepository.findById(UUID.fromString(id)).get();
+        Route route = null;
+        try {
+            route = routeRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new RouteNotFoundException("Route not found"));
+        } catch (RouteNotFoundException e) {
+            return new ResponseEntity<>(route, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(route, HttpStatus.OK);
     }
 

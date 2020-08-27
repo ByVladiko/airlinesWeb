@@ -1,10 +1,10 @@
-package com.airlines.service.exception;
+package com.airlines.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
 public class UserAlreadyExistAuthenticationException extends AuthenticationException {
 
-    public UserAlreadyExistAuthenticationException(final String msg) {
+    public UserAlreadyExistAuthenticationException(String msg) {
         super(msg);
     }
 

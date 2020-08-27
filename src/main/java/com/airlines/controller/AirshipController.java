@@ -1,5 +1,6 @@
 package com.airlines.controller;
 
+import com.airlines.exception.AirshipNotFoundException;
 import com.airlines.model.airship.Airship;
 import com.airlines.repository.AirshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,11 @@ public class AirshipController {
     }
 
     @GetMapping(path = "/airships/delete")
-    public String delete(@RequestParam String id) {
+    public String delete(@RequestParam String id, Map<String, Object> param) {
+        if (!airshipRepository.existsById(UUID.fromString(id))) {
+            param.put("exception", "Airship not found");
+            return "redirect:/airships";
+        }
         airshipRepository.deleteById(UUID.fromString(id));
         return "redirect:/airships";
     }
@@ -52,15 +57,29 @@ public class AirshipController {
                          @RequestParam String model,
                          @RequestParam int economy,
                          @RequestParam int business,
-                         @RequestParam int premium) {
-        Airship airship = new Airship(UUID.fromString(id), model, economy, business, premium);
+                         @RequestParam int premium,
+                         Map<String, Object> param) {
+        Airship airship = null;
+        try {
+            airship = airshipRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new AirshipNotFoundException("Airship not found"));
+        } catch (AirshipNotFoundException e) {
+            param.put("exception", e.getMessage());
+            return "redirect:/airships";
+        }
         airshipRepository.save(airship);
         return "redirect:/airships";
     }
 
     @GetMapping(value = "/airships/getById/{id}")
     public ResponseEntity<Airship> getById(@PathVariable(name = "id") String id) {
-        final Airship airship = airshipRepository.findById(UUID.fromString(id)).get();
+        Airship airship;
+        try {
+            airship = airshipRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new AirshipNotFoundException("Airship not found"));
+        } catch (AirshipNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(airship, HttpStatus.OK);
     }
 

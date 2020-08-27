@@ -1,9 +1,8 @@
 package com.airlines.controller;
 
+import com.airlines.exception.UserAlreadyExistAuthenticationException;
 import com.airlines.model.user.User;
-import com.airlines.repository.UserRepository;
-import com.airlines.service.UserService;
-import com.airlines.service.exception.UserAlreadyExistAuthenticationException;
+import com.airlines.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +13,10 @@ import java.util.Map;
 @Controller
 public class RegistrationController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Autowired
-    public RegistrationController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    public RegistrationController(UserService userService) {
         this.userService = userService;
     }
 

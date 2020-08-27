@@ -1,4 +1,4 @@
-package com.airlines.service;
+package com.airlines.exception;
 
 public class BusinessServiceException extends Exception {
 
