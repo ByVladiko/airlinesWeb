@@ -37,22 +37,27 @@ function getTicketsByClient(id) {
         type: 'GET',
         url: document.location.origin + '/tickets/getByClient/' + id,
         success: function (list) {
-            let tbody = document.querySelector('table tbody').innerHTML;
+            let table = document.getElementById("tableTickets");
+            let tbody = table.getElementsByTagName('tbody')[0];
+
+            if (tbody.rows.length > 0) {
+                for (let i = 0; i < tbody.rows.length;) {
+                    tbody.rows[i].remove();
+                }
+            }
+
             let tickets = Object.values(list);
-            console.log(list);
-            for (let ticket in tickets) {
-                console.log(ticket);
-                // let row =
-                //     `<tr>
-                //     <td>${ticket.flight.route}</td>
-                //     <td>${ticket.flight.dateOfDeparture}</td>
-                //     <td>${ticket.flight.dateOfArrival}</td>
-                //     <td>${ticket.category}</td>
-                //     <td>${ticket.cost}</td>
-                //     <td>${ticket.baggage}</td>
-                //     <td>${ticket.status}</td>
-                //     </tr>`;
-                // tbody.append(row);
+            for (let i = 0; i < tickets.length; i++) {
+                let row = tbody.insertRow(i);
+                let flight = tickets[i].flight;
+                row.insertCell(row.cells.length).innerHTML = i + 1;
+                row.insertCell(row.cells.length).innerHTML = flight.route.startPoint + ' -> ' + flight.route.endPoint;
+                row.insertCell(row.cells.length).innerHTML = flight.dateOfDeparture;
+                row.insertCell(row.cells.length).innerHTML = flight.dateOfArrival;
+                row.insertCell(row.cells.length).innerHTML = tickets[i].category;
+                row.insertCell(row.cells.length).innerHTML = tickets[i].cost;
+                row.insertCell(row.cells.length).innerHTML = tickets[i].baggage;
+                row.insertCell(row.cells.length).innerHTML = tickets[i].status;
             }
             $('#modalTicketsOfClient').modal();
         }
