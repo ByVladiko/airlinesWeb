@@ -20,4 +20,9 @@ public class CustomClientRepositoryImpl implements CustomClientRepository {
         Client client = clientRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         return client.getTickets();
     }
+
+    @Override
+    public List<Ticket> findAllAvailable() {
+        return null;
+    }
 }

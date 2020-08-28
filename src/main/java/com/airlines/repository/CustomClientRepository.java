@@ -12,4 +12,6 @@ public interface CustomClientRepository {
 
     List<Ticket> findAllById(UUID id) throws UserNotFoundException;
 
+    List<Ticket> findAllAvailable();
+
 }
