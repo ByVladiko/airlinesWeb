@@ -3,7 +3,10 @@ package com.airlines.controller;
 import com.airlines.exception.FlightNotFoundException;
 import com.airlines.exception.TicketNotFoundException;
 import com.airlines.exception.UserNotFoundException;
-import com.airlines.model.airship.*;
+import com.airlines.model.airship.Category;
+import com.airlines.model.airship.Flight;
+import com.airlines.model.airship.Status;
+import com.airlines.model.airship.Ticket;
 import com.airlines.repository.ClientRepository;
 import com.airlines.repository.FlightRepository;
 import com.airlines.repository.TicketRepository;
@@ -46,20 +49,8 @@ public class TicketController {
     public String add(@RequestParam String flightId,
                       @RequestParam int categoryId,
                       @RequestParam float cost,
-                      @RequestParam float baggage,
                       @RequestParam int statusId,
-                      @RequestParam String clientId,
                       Map<String, Object> model) {
-        Client client = null;
-        if (!clientId.isEmpty()) {
-            try {
-                client = clientRepository.findById(UUID.fromString(clientId))
-                        .orElseThrow(() -> new UserNotFoundException("User not found"));
-            } catch (UserNotFoundException e) {
-                model.put("exception", e.getMessage());
-                return "clients";
-            }
-        }
         Flight flight;
         try {
             flight = flightRepository.findById(UUID.fromString(flightId))
@@ -69,12 +60,8 @@ public class TicketController {
             return "redirect:/tickets";
         }
 
-        Ticket ticket = new Ticket(flight, Category.values()[categoryId], cost, baggage, Status.values()[statusId]);
+        Ticket ticket = new Ticket(flight, Category.values()[categoryId], cost, 0, Status.values()[statusId]);
         ticketRepository.save(ticket);
-
-        List<Ticket> ticketList = client.getTickets();
-        ticketList.add(ticket);
-        client.setTickets(ticketList);
 
         return "redirect:/tickets";
     }
@@ -131,7 +118,7 @@ public class TicketController {
     public ResponseEntity<List<Ticket>> getByClient(@PathVariable("id") String id, Map<String, Object> model) {
         List<Ticket> ticketList;
         try {
-            ticketList = clientRepository.findAllById(UUID.fromString(id));
+            ticketList = clientRepository.findAllTicketsById(UUID.fromString(id));
         } catch (UserNotFoundException e) {
             model.put("exception", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
