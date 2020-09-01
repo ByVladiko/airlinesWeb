@@ -5,7 +5,7 @@
     <div th:insert="~{parts/bootstrap :: bootstrap}"></div>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid col-md-4 col-md-offset-4">
     <div class="card-body">
         <div th:if="${param.error}">
             <div class="alert alert-danger" role="alert">Invalid Username or Password</div>
@@ -14,19 +14,15 @@
             <div class="alert alert-success" role="alert">You have been logged out</div>
         </div>
         <form th:action="@{/login}" method="post">
-            <a class="float-right btn btn-outline-primary" href="/registration">Sign up</a>
-            <h4 class="card-title">Sign in</h4>
+            <h4 class="card-title text-center">Sign in</h4>
             <div class="form-group">
-                <label>Your login</label>
                 <input name="username" class="form-control" placeholder="Username" type="text">
             </div>
             <div class="form-group">
-                <label>Your password</label>
                 <input name="password" class="form-control" placeholder="******" type="password">
             </div>
-            <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
-            </div>
+            <a class="btn btn-outline-primary btn-block" href="/registration">Sign up</a>
         </form>
     </div>
 </div>
