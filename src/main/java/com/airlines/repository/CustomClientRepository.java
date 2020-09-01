@@ -10,8 +10,6 @@ import java.util.UUID;
 @Repository
 public interface CustomClientRepository {
 
-    List<Ticket> findAllById(UUID id) throws UserNotFoundException;
-
-    List<Ticket> findAllAvailable();
+    List<Ticket> findAllTicketsById(UUID id) throws UserNotFoundException;
 
 }
