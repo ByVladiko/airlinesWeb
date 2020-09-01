@@ -19,7 +19,7 @@ public class BuyingTicket {
     public String greeting(@PathVariable("id") String id, Map<String, Object> params) {
         Iterable<Ticket> tickets = ticketRepository.findAll();
         params.put("tickets", tickets);
-        fillFields(params);
+//        fillFields(params);
         return "tickets";
     }
 
