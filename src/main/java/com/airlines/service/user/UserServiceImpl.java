@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,14 +34,10 @@ public class UserServiceImpl implements UserService {
             user.setRole(Role.USER);
         }
 
-        user.setPassword(applicationContext.getAutowireCapableBeanFactory().getBean(BCryptPasswordEncoder.class).encode(user.getPassword()));
+        user.setPassword(applicationContext.getAutowireCapableBeanFactory()
+                .getBean(BCryptPasswordEncoder.class).encode(user.getPassword()));
 
         return userRepository.save(user);
-    }
-
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
     }
 
     @Override
