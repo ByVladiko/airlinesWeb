@@ -22,9 +22,11 @@
                 <input id="endPoint" name="endPoint" type="text" class="form-control" required>
             </div>
         </div>
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-    <table class="table table-striped table-bordered table-hover mt-4" th:if="${not #lists.isEmpty(routes)}">
+    <table class="table table-responsive table-striped table-bordered table-hover mt-4"
+           th:if="${not #lists.isEmpty(routes)}">
         <thead>
         <tr>
             <th style="width: 5%">#</th>
@@ -89,6 +91,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary">Confirm</button>
                 </div>
             </form>

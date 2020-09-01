@@ -10,7 +10,7 @@
 <script type="text/javascript" th:src="@{/js/main.js}"></script>
 <body>
 <div th:insert="~{parts/navbar :: navbar}"></div>
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<div class="cover-container d-flex w-100 h-100 p-3 flex-column">
     <h1 class="center-block text-center">Airships</h1>
     <form method="post" action="/airships">
         <div class="form-row">
@@ -31,9 +31,11 @@
                 <input name="premium" type="number" class="form-control" placeholder="Premium" required>
             </div>
         </div>
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-    <table class="table table-striped table-bordered table-hover mt-4" th:if="${not #lists.isEmpty(airships)}">
+    <table class="table table-responsive table-striped table-bordered table-hover mt-4"
+           th:if="${not #lists.isEmpty(airships)}">
         <thead>
         <tr>
             <th scope="col" rowspan="2" style="width: 5%">#</th>
@@ -113,6 +115,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary">Confirm</button>
                 </div>
             </form>

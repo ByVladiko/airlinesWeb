@@ -39,10 +39,6 @@
                 <input name="cost" type="number" step="0.01" class="form-control" id="inputCost" required>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="inputBaggage">Baggage</label>
-                <input name="baggage" type="number" step="0.01" class="form-control" id="inputBaggage" required>
-            </div>
-            <div class="col-md-3 mb-3">
                 <label for="inputStatus">Status</label>
                 <select name="statusId" class="custom-select" id="inputStatus" required>
                     <option selected disabled value="">Choose...</option>
@@ -52,16 +48,17 @@
                 </select>
             </div>
         </div>
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-    <table class="table table-striped table-bordered table-hover mt-4" th:if="${not #lists.isEmpty(tickets)}">
+    <table class="table table-responsive table-striped table-bordered table-hover mt-4"
+           th:if="${not #lists.isEmpty(tickets)}">
         <thead>
         <tr>
             <th scope="col" rowspan="2" style="width: 5%">#</th>
-            <th scope="col" colspan="3" style="width: 50%">Flight</th>
+            <th scope="col" colspan="3" style="width: 60%">Flight</th>
             <th scope="col" rowspan="2" style="width: 10%">Category</th>
             <th scope="col" rowspan="2" style="width: 10%">Cost</th>
-            <th scope="col" rowspan="2" style="width: 10%">Baggage</th>
             <th scope="col" rowspan="2" style="width: 10%">Status</th>
             <th scope="col" rowspan="2" style="width: 5%">Actions</th>
         </tr>
@@ -78,7 +75,6 @@
             <td th:text="${ticket.flight.dateOfArrival}"></td>
             <td th:text="${ticket.category}"></td>
             <td th:text="${ticket.cost}"></td>
-            <td th:text="${ticket.baggage}"></td>
             <td th:text="${ticket.status}"></td>
             <td class="col d-flex">
                 <div class="btn-group">
@@ -156,6 +152,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary">Confirm</button>
                 </div>
             </form>
