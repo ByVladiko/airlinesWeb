@@ -5,6 +5,14 @@ $(document).ready(function () {
         let modal = $(this);
         modal.find($('#delRef')).attr("href", recipient);
     });
+
+    $('#modalTicketsOfClient').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget);
+        let recipient = button.data('action');
+        console.log(recipient);
+        let modal = $(this);
+        modal.find($('#buyTicket')).attr("href", recipient);
+    });
 });
 
 function getById(id) {
