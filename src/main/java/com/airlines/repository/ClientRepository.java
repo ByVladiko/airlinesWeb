@@ -16,5 +16,5 @@ public interface ClientRepository extends CrudRepository<Client, UUID>, CustomCl
     @Override
     Optional<Client> findById(UUID uuid);
 
-    List<Ticket> findAllById(UUID id) throws UserNotFoundException;
+    List<Ticket> findAllTicketsById(UUID id) throws UserNotFoundException;
 }
