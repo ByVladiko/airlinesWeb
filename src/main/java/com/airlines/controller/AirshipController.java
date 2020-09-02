@@ -59,7 +59,7 @@ public class AirshipController {
                          @RequestParam int business,
                          @RequestParam int premium,
                          Map<String, Object> param) {
-        Airship airship = null;
+        Airship airship;
         try {
             airship = airshipRepository.findById(UUID.fromString(id))
                     .orElseThrow(() -> new AirshipNotFoundException("Airship not found"));
