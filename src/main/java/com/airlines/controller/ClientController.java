@@ -1,5 +1,6 @@
 package com.airlines.controller;
 
+import com.airlines.exception.ClientNotFoundException;
 import com.airlines.exception.FlightNotFoundException;
 import com.airlines.model.airship.*;
 import com.airlines.repository.ClientRepository;
@@ -59,12 +60,14 @@ public class ClientController {
     public String update(@RequestParam String id,
                          @RequestParam String firstName,
                          @RequestParam String middleName,
-                         @RequestParam String lastName) {
+                         @RequestParam String lastName,
+                         @RequestParam float bill) {
         Client client = clientRepository.findById(UUID.fromString(id)).get();
 
         client.setFirstName(firstName);
         client.setMiddleName(middleName);
         client.setLastName(lastName);
+        client.setBill(bill);
 
         clientRepository.save(client);
         return "redirect:/clients";
@@ -78,9 +81,20 @@ public class ClientController {
 
     @GetMapping(value = "/clients/{id}/purchase")
     public String purchaseForClient(@PathVariable(name = "id") String id, Map<String, Object> params) {
+        Client client;
+        try {
+            client = clientRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new ClientNotFoundException("Client not found"));
+        } catch (ClientNotFoundException e) {
+            params.put("message", e.getMessage());
+            return "redirect:/clients";
+        }
         List<Ticket> ticketList = ticketRepository.findTicketsByStatus(Status.FREE);
+
         params.put("tickets", ticketList);
+        params.put("client", client);
         fillFields(params);
+
         return "purchase";
     }
 
@@ -90,16 +104,21 @@ public class ClientController {
                          @RequestParam(required = false) Integer category,
                          Map<String, Object> params) {
         Flight flight;
+        Client client;
         try {
+            client = clientRepository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new ClientNotFoundException("Client not found"));
             flight = flightRepository.findById(UUID.fromString(flightId))
-                    .orElseThrow(() -> new FlightNotFoundException("Flight not found exception"));
-        } catch (FlightNotFoundException e) {
+                    .orElseThrow(() -> new FlightNotFoundException("Flight not found"));
+        } catch (FlightNotFoundException | ClientNotFoundException e) {
             params.put("message", e.getMessage());
             return "purchase";
         }
+
         List<Ticket> ticketList = ticketRepository.findTicketsByStatusAndFlightAndCategory(Status.FREE,
                 flight, Category.values()[category]);
         params.put("tickets", ticketList);
+        params.put("client", client);
         fillFields(params);
         return "purchase";
     }

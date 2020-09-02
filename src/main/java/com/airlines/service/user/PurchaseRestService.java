@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +25,10 @@ public class PurchaseRestService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @GetMapping(value = "/purchase")
+    @PostMapping(value = "/clients/{idClient}/purchase/preview")
     public @ResponseBody
-    ResponseEntity<Map<String, Object>> getInfoAboutPurchase(@RequestParam String idTicket, @RequestParam String idClient) {
+    ResponseEntity<Map<String, Object>> getInfoAboutPurchase(@RequestParam String idTicket,
+                                                             @PathVariable String idClient) {
         Ticket ticket;
         Client client;
         try {
@@ -43,6 +41,12 @@ public class PurchaseRestService {
         }
 
         Map<String, Object> map = new HashMap<>();
+
+        if (client.getBill() < ticket.getCost()) {
+            map.put("warning", "Not enough money on account");
+            return new ResponseEntity<>(map, HttpStatus.I_AM_A_TEAPOT);
+        }
+
         map.put("ticket", ticket);
         map.put("client", client);
 
