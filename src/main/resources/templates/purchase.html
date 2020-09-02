@@ -10,6 +10,14 @@
 <body>
 <div th:insert="~{parts/navbar :: navbar}"></div>
 <div class="container w-20 p-3">
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title"
+                th:text="${client.firstName} + ' ' + ${client.middleName} + ' ' + ${client.lastName}">Client</h5>
+            <p th:text="'Bill: ' + ${client.bill}">Bill: 0</p>
+            </blockquote>
+        </div>
+    </div>
     <form method="post" action="purchase" class="row justify-content-center">
         <div class="col-md-6 mb-3">
             <label for="flightId">Flight</label>
@@ -44,58 +52,82 @@
                         <p class="card-text" th:text="@{Cost: {cost} (cost=${ticket.cost})}"></p>
                         <p class="card-text" th:text="@{Category: {category} (category=${ticket.category})}"></p>
                     </div>
-                    <a href="#" class="btn btn-primary">Buy</a>
+                    <button class="btn btn-primary" th:data-id="${ticket.id}" th:data-csrf="${_csrf.token}"
+                            th:onclick="getInfoAboutPurchase(this.getAttribute('data-id'), this.getAttribute('data-csrf'))">
+                        Buy
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--<div class="modal fade" id="modalBuyTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"-->
-<!--     aria-hidden="true">-->
-<!--    <div class="modal-dialog" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="exampleModalLabel">Purchase</h5>-->
-<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--            </div>-->
-<!--            <form method="post" action="/tickets/update">-->
-<!--                <div class="modal-body">-->
-<!--                    <input id="id-edit" name="id" type="hidden" required>-->
-<!--                    <div class="form-group row">-->
-<!--                        <label for="flight">Flight</label>-->
-<!--                        <input type="text" readonly class="form-control-plaintext" id="flight" th:value="${flight.toString()}">-->
-<!--                    </div>-->
-<!--                    <div class="form-group row">-->
-<!--                        <label for="category">Category</label>-->
-<!--                        <input type="text" readonly class="form-control-plaintext" id="category" th:value="${category.toString()}">-->
-<!--                    </div>-->
-<!--                    <div class="form-group row">-->
-<!--                        <label for="cost">Cost</label>-->
-<!--                        <input type="number" readonly class="form-control-plaintext" id="cost" th:value="${cost}">-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                        <label for="baggage-edit">Baggage</label>-->
-<!--                        <input id="baggage-edit" name="baggage" type="number" step="0.01" class="form-control" required>-->
-<!--                    </div>-->
-<!--                    <div class="form-group row">-->
-<!--                        <label for="balance">Current balance</label>-->
-<!--                        <input type="number" readonly class="form-control-plaintext" id="balance" th:value="${balance}">-->
-<!--                    </div>-->
-<!--                    <div class="form-group row">-->
-<!--                        <label for="afterBalance">After operation balance</label>-->
-<!--                        <input type="number" readonly class="form-control-plaintext" id="afterBalance" th:value="${balance}">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-<!--                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
-<!--                    <button type="submit" class="btn btn-primary">Confirm</button>-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="modal fade" id="modalPreviewPurchase" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Purchase</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/tickets/purchase">
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <input id="idTicket" name="idTicket" type="hidden">
+                        <ul class="list-group list-group-horizontal">
+                            <li class="list-group-item" flex-fill>
+                                <label for="flightStartPoint">Start point</label>
+                                <input type="text" readonly class="form-control-plaintext" id="flightStartPoint">
+                            </li>
+                            <li class="list-group-item flex-fill">
+                                <label for="flightEndPoint">End point</label>
+                                <input type="text" readonly class="form-control-plaintext" id="flightEndPoint">
+                            </li>
+                        </ul>
+                        <ul class="list-group list-group-horizontal">
+                            <li class="list-group-item flex-fill">
+                                <label for="flightDateOfDeparture">Date departure</label>
+                                <input type="text" readonly class="form-control-plaintext"
+                                       id="flightDateOfDeparture">
+                            </li>
+                            <li class="list-group-item flex-fill">
+                                <label for="flightDateOfArrival">Date arrival</label>
+                                <input type="datetime-local" readonly class="form-control-plaintext"
+                                       id="flightDateOfArrival">
+                            </li>
+                        </ul>
+                        <li class="list-group-item flex-fill">
+                            <label for="category">Category</label>
+                            <input type="text" readonly class="form-control-plaintext" id="category">
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <label for="cost">Cost</label>
+                            <input type="number" readonly class="form-control-plaintext" id="cost">
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <label for="baggage-edit">Baggage</label>
+                            <input id="baggage-edit" name="baggage" type="number" step="0.01" class="form-control"
+                                   required>
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <label for="balance">Current balance</label>
+                            <input type="number" readonly class="form-control-plaintext" id="balance">
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <label for="afterBalance">After operation balance</label>
+                            <input type="number" readonly class="form-control-plaintext" id="afterBalance">
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

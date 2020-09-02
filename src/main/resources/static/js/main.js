@@ -9,11 +9,21 @@ $(document).ready(function () {
     $('#modalTicketsOfClient').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget);
         let recipient = button.data('action');
-        console.log(recipient);
         let modal = $(this);
         modal.find($('#buyTicket')).attr("href", recipient);
     });
+
+    // $('#modalPreviewPurchase').on('show.bs.modal', function (event) {
+    //     let button = $(event.relatedTarget);
+    //     let recipient = button.data('action');
+    //     let modal = $(this);
+    //     modal.find($('#buyTicket')).attr("href", recipient);
+    // });
 });
+
+function log(data) {
+    console.log(data);
+}
 
 function getById(id) {
     $.ajax({
@@ -68,6 +78,36 @@ function getTicketsByClient(id) {
                 row.insertCell(row.cells.length).innerHTML = tickets[i].status;
             }
             $('#modalTicketsOfClient').modal();
+        }
+    })
+}
+
+function getInfoAboutPurchase(idTicket, csrf) {
+    $.ajax({
+        url: window.location.href + '/preview',
+        headers: {"X-CSRF-TOKEN": csrf},
+        data: {"idTicket": idTicket},
+        type: 'POST',
+        success: function (object) {
+            let ticket = object.ticket;
+            console.log(ticket);
+            let client = object.client;
+            console.log(client);
+            document.getElementById("idTicket").value = ticket.id;
+            document.getElementById("flightStartPoint").value = ticket.flight.route.startPoint;
+            document.getElementById("flightEndPoint").value = ticket.flight.route.endPoint;
+            document.getElementById("flightDateOfDeparture").value = ticket.flight.dateOfDeparture;
+            document.getElementById("flightDateOfArrival").value = ticket.flight.dateOfArrival;
+            document.getElementById("category").value = ticket.category;
+            document.getElementById("cost").value = ticket.cost;
+            document.getElementById("balance").value = client.bill;
+            document.getElementById("afterBalance").value = client.bill - ticket.cost;
+            $('#modalPreviewPurchase').modal();
+        },
+        error: function (jqXHR, exception) {
+            if (jqXHR.status == 418) {
+                alert(jqXHR.responseJSON.warning);
+            }
         }
     })
 }
