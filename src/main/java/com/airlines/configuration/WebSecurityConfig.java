@@ -1,7 +1,7 @@
 package com.airlines.configuration;
 
 import com.airlines.provider.CustomAuthenticationProvider;
-import com.airlines.service.user.CustomUserDetailService;
+import com.airlines.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
