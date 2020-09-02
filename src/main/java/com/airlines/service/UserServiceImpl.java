@@ -1,4 +1,4 @@
-package com.airlines.service.user;
+package com.airlines.service;
 
 import com.airlines.exception.UserAlreadyExistAuthenticationException;
 import com.airlines.exception.UserNotFoundException;

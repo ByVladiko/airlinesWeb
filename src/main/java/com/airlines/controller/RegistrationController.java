@@ -2,7 +2,7 @@ package com.airlines.controller;
 
 import com.airlines.exception.UserAlreadyExistAuthenticationException;
 import com.airlines.model.user.User;
-import com.airlines.service.user.UserService;
+import com.airlines.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
